@@ -1,0 +1,59 @@
+.project-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.project-button_gray {
+  background-color: rgb(180, 180, 180);
+}
+
+.project-button_gray:hover {
+  background-color: rgb(161, 161, 161);
+}
+
+.project-button_orange {
+  background-color: rgb(255, 153, 0);
+}
+
+.project-button_orange:hover {
+  background-color: rgb(218, 131, 0);
+}
+
+.project-button_small {
+  padding: 10px 20px;
+  font-size: 14px;
+  gap: 14px;
+}
+
+.project-button_medium {
+  padding: 11px 30px;
+  font-size: 16px;
+  gap: 16px;
+}
+
+.project-button_big {
+  padding: 13px 40px;
+  font-size: 18px;
+  gap: 18px;
+}
+
+.project-button-img_small {
+  width: 16px;
+}
+
+.project-button-img_medium {
+  width: 18px;
+}
+
+.project-button-img_big {
+  width: 20px;
+}
+
+.project-button-img_orange {
+  order: 1;
+}
