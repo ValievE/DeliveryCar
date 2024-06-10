@@ -203,6 +203,10 @@
   cursor: default;
 }
 
+.catalog-banner__link {
+  text-decoration: none;
+}
+
 .catalog-banner__img {
   width: 50%;
 }

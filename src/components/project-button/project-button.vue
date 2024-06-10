@@ -43,6 +43,10 @@ if (buttonProps.icon === 'arrow') {
 if (buttonProps.icon === 'user') {
   activeIcon.value = '/img/icons/icon_user.svg'
 }
+
+if (buttonProps.icon === 'cart') {
+  activeIcon.value = '/img/icons/icon_cart.svg'
+}
 </script>
 
 <style src="./project-button.css" scoped />

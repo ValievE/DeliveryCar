@@ -1,0 +1,227 @@
+[
+  {
+    "brand": "BMW",
+    "model": "M4",
+    "body": "Купе",
+    "photos": ["/img/catalog/newCars/bmw/m4.png"],
+    "inStock": 0,
+    "price": 15599000,
+    "info": {
+      "year": 2024,
+      "hp": 510,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "BMW",
+    "model": "M4",
+    "body": "Купе",
+    "photos": ["/img/catalog/newCars/bmw/m4.png"],
+    "inStock": 2,
+    "price": 14999000,
+    "info": {
+      "year": 2023,
+      "hp": 510,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "BMW",
+    "model": "5-series",
+    "body": "Седан",
+    "photos": ["/img/catalog/newCars/bmw/5series.png"],
+    "inStock": 0,
+    "price": 12099000,
+    "info": {
+      "year": 2023,
+      "hp": 252,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Mercedes-Benz",
+    "model": "S-Class(S450)",
+    "body": "Седан",
+    "photos": ["/img/catalog/newCars/mercedes-benz/s-class.webp"],
+    "inStock": 0,
+    "price": 26600000,
+    "info": {
+      "year": 2024,
+      "hp": 367,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Mercedes-Benz",
+    "model": "V-Class(V300d)",
+    "body": "Минивэн",
+    "photos": ["/img/catalog/newCars/mercedes-benz/v-class.webp"],
+    "inStock": 1,
+    "price": 14989000,
+    "info": {
+      "year": 2023,
+      "hp": 237,
+      "kpp": "Автомат",
+      "du": "Задний",
+      "fuel": "Дизель"
+    }
+  },
+  {
+    "brand": "Haval",
+    "model": "Jolion",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/haval/jolion.webp"],
+    "inStock": 3,
+    "price": 1499000,
+    "info": {
+      "year": 2024,
+      "hp": 143,
+      "kpp": "Механическая",
+      "du": "Передний",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Haval",
+    "model": "Dargo",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/haval/dargo.webp"],
+    "inStock": 1,
+    "price": 1499000,
+    "info": {
+      "year": 2024,
+      "hp": 192,
+      "kpp": "Робот",
+      "du": "Передний",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Porsche",
+    "model": "Cayenne",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/porsche/cayenne.png"],
+    "inStock": 0,
+    "price": 21550000,
+    "info": {
+      "year": 2024,
+      "hp": 340,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Toyota",
+    "model": "Land Cruiser Prado (150 Series)",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/toyota/prado-150series.webp"],
+    "inStock": 1,
+    "price": 8490000,
+    "info": {
+      "year": 2024,
+      "hp": 163,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Toyota",
+    "model": "Highlander",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/toyota/highlander-u70.webp"],
+    "inStock": 1,
+    "price": 7450000,
+    "info": {
+      "year": 2023,
+      "hp": 249,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Toyota",
+    "model": "Camry",
+    "body": "Седан",
+    "photos": ["/img/catalog/newCars/toyota/camry-xv70.webp"],
+    "inStock": 0,
+    "price": 3450000,
+    "info": {
+      "year": 2023,
+      "hp": 209,
+      "kpp": "Автомат",
+      "du": "Передний",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Volkswagen",
+    "model": "ID.6 Crozz Lite Pro",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/volkswagen/id6.webp"],
+    "inStock": 0,
+    "price": 4000000,
+    "info": {
+      "year": 2022,
+      "hp": 204,
+      "kpp": "",
+      "du": "Задний",
+      "fuel": "Электрический"
+    }
+  },
+  {
+    "brand": "Volkswagen",
+    "model": "Touareg",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/volkswagen/touareg.png"],
+    "inStock": 0,
+    "price": 9500000,
+    "info": {
+      "year": 2022,
+      "hp": 340,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Geely",
+    "model": "Okavango Flagship",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/geely/okavango.webp"],
+    "inStock": 0,
+    "price": 3100000,
+    "info": {
+      "year": 2023,
+      "hp": 177,
+      "kpp": "Робот",
+      "du": "Передний",
+      "fuel": "Бензин"
+    }
+  },
+  {
+    "brand": "Geely",
+    "model": "Monjaro",
+    "body": "Внедорожник",
+    "photos": ["/img/catalog/newCars/geely/monjaro.webp"],
+    "inStock": 1,
+    "price": 3390000,
+    "info": {
+      "year": 2024,
+      "hp": 238,
+      "kpp": "Автомат",
+      "du": "Полный",
+      "fuel": "Бензин"
+    }
+  }
+]
