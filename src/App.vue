@@ -7,8 +7,10 @@
       <nav class="nav-bar">
         <router-link to="/" class="nav-bar__item">Главная</router-link>
         <router-link to="/catalog" class="nav-bar__item">Каталог</router-link>
-        <router-link to="/" class="nav-bar__item">Доставка</router-link>
-        <router-link to="/cabinet" class="nav-bar__item">О нас</router-link>
+        <router-link to="/cabinet" class="nav-bar__item">Доставка</router-link>
+        <router-link to="/" class="nav-bar__item" @click="rollTo('section-three')"
+          >О нас</router-link
+        >
       </nav>
       <a href="tel:+79260003939" class="phone-link">+7 (926) 000-39-39</a>
       <project-button
@@ -39,11 +41,14 @@
         </div>
       </div>
       <div class="footer__links">
-        <a href="/" class="footer__link">Партнерская программа</a>
-        <a href="/" class="footer__link">Персональные данные</a>
-        <a href="/" class="footer__link">Политика конфиденциальности</a>
-        <a href="/" class="footer__link">Служба поддержки</a>
-        <a href="/" class="footer__link">Вакансии</a>
+        <router-link
+          v-for="(footerLink, index) in footerLinks"
+          :key="index"
+          :to="footerLink.link"
+          class="footer__link"
+          @click="rollToTop"
+          >{{ footerLink.name }}</router-link
+        >
       </div>
       <span class="footer__text">© DELIVERYCAR 2024. ВСЕ ПРАВА НЕ ЗАЩИЩЕНЫ</span>
     </div>
@@ -59,25 +64,44 @@ import projectButton from './components/project-button/project-button.vue'
 
 const isAuthModalOpened = ref(false)
 
+const footerLinks = [
+  {
+    name: 'Партнерская программа',
+    link: '/info/partnership'
+  },
+  {
+    name: 'Персональные данные',
+    link: '/info/personal'
+  },
+  {
+    name: 'Политика конфиденциальности',
+    link: '/info/confidentiality'
+  },
+  {
+    name: 'Вакансии',
+    link: '/info/vacanсies'
+  }
+]
+
 const socialMedia = [
   {
     name: 'Instagram',
-    url: '',
+    url: 'https://www.youtube.com/watch?v=KvH3v9uyyf0',
     img: '/img/icons/icon_instagram.svg'
   },
   {
     name: 'Telegram',
-    url: '',
+    url: 'https://t.me/evdsg01',
     img: '/img/icons/icon_telegram.svg'
   },
   {
     name: 'VK',
-    url: '',
+    url: 'https://vk.com/id62878382',
     img: '/img/icons/icon_vk.svg'
   },
   {
     name: 'WhatsApp',
-    url: '',
+    url: 'https://www.whatsapp.com/',
     img: '/img/icons/icon_whatsapp.svg'
   }
 ]
@@ -91,5 +115,19 @@ const modalWindow = (arg: boolean) => {
   isAuthModalOpened.value = false
   document.body.style.overflowY = 'visible'
   return isAuthModalOpened
+}
+
+const rollToTop = () => {
+  document.getElementsByTagName('body')[0].scrollIntoView({ block: 'start', inline: 'center' })
+}
+
+const rollTo = (arg: string) => {
+  setTimeout(() => {
+    document.getElementsByClassName(arg)[0].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    })
+  }, 100)
 }
 </script>

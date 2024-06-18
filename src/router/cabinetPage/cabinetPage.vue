@@ -8,13 +8,19 @@
           <router-link
             v-for="(menuItem, index) in menuItems"
             :key="index"
-            :to="menuItem.url === '/' ? '/' : `/cabinet/${menuItem.url}`"
+            :to="
+              menuItem.url === '/'
+                ? '/'
+                : `/cabinet/${menuItem.isActive ? menuItem.url : menuItems[0].url}`
+            "
+            :title="menuItem.isActive ? '' : 'На данный момент этот раздел недоступен'"
             class="cabinet__button"
             :class="{
-              cabinet__button_active: activeMenu === menuItem.url
+              cabinet__button_active: activeMenu === menuItem.url,
+              cabinet__button_default: menuItem.isActive,
+              cabinet__button_disabled: !menuItem.isActive
             }"
-            :disabled="menuItem.isActive"
-            @click="activeMenu = menuItem.url"
+            @click="changeMenu(index)"
             >{{ menuItem.title }}</router-link
           >
         </div>
@@ -50,6 +56,14 @@ menuItems.forEach((menuItem) => {
     activeMenu.value = menuItem.url
   }
 })
+
+const changeMenu = (arg: number) => {
+  if (menuItems[arg].isActive) {
+    activeMenu.value = menuItems[arg].url
+    return activeMenu
+  }
+  return activeMenu.value
+}
 </script>
 
 <style src="./cabinetPage.css" />

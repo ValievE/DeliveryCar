@@ -9,6 +9,11 @@ const router = createRouter({
       component: () => import('./indexPage/indexPage.vue')
     },
     {
+      path: '/info/:section',
+      name: 'info',
+      component: () => import('./infoPage/infoPage.vue')
+    },
+    {
       path: '/catalog',
       name: 'catalog',
       // route level code-splitting

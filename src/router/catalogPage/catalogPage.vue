@@ -32,7 +32,11 @@
         <p class="catalog-window__title">{{ fakeDB[activeSelector].title }}</p>
       </div>
       <div class="catalog-window__body">
-        <div class="filters" :style="{ width: isFiltersOpened ? '250px' : '0' }">
+        <div
+          v-if="fakeDB[activeSelector].filters.length > 0"
+          class="filters"
+          :style="{ width: isFiltersOpened ? '250px' : '0' }"
+        >
           <div class="filters-hide-btn" :style="{ width: isFiltersOpened ? '45px' : '35px' }">
             <button class="filters-hide-btn-body" @click="openFilters">
               <img
@@ -65,12 +69,7 @@
                 class="filters__list-item"
               >
                 <label class="filters__label" :for="filter.name">{{ filter.name }}</label>
-                <select
-                  :id="filter.name"
-                  v-model="carSort.model"
-                  class="filters__select"
-                  @change="test"
-                >
+                <select :id="filter.name" v-model="carSort.model" class="filters__select">
                   <option class="filters__option" value="">Выберите параметр</option>
                   <option
                     v-for="(filterOpt, FOindex) in filter.values"
@@ -206,59 +205,12 @@ const fakeDB = [
   {
     title: 'Автомобили с пробегом',
     img: '/img/catalog/selectors/used_image.png',
-    filters: [
-      {
-        name: 'Производитель',
-        values: ['BMW', 'Geely', 'Haval', 'Mercedes-Benz', 'Porsche', 'Toyota', 'Volkswagen'],
-        input: carSort.brand
-      },
-      {
-        name: 'Модель',
-        values: ['Выберите марку'],
-        input: carSort.model
-      },
-      {
-        name: 'Год производства',
-        values: [2020, 2021, 2022, 2023, 2024],
-        input: carSort.year
-      },
-      {
-        name: 'Кузов',
-        values: ['Хетчбек', 'Седан', 'Универсал', 'Внедорожник', 'Минивэн'],
-        input: carSort.body
-      }
-    ]
+    filters: []
   },
   {
     title: 'Конфигуратор',
     img: '/img/catalog/selectors/configure_image.png',
-    filters: [
-      {
-        name: 'Производитель',
-        values: ['BMW', 'Geely', 'Haval', 'Mercedes-Benz', 'Porsche', 'Toyota', 'Volkswagen'],
-        input: carSort.brand
-      },
-      {
-        name: 'Модель',
-        values: ['Выберите марку'],
-        input: carSort.model
-      },
-      {
-        name: 'Год производства',
-        values: [2024],
-        input: carSort.year
-      },
-      {
-        name: 'Кузов',
-        values: ['Хетчбек', 'Седан', 'Универсал', 'Внедорожник', 'Минивэн'],
-        input: carSort.body
-      },
-      {
-        name: 'Еще чо нидь',
-        values: ['Аоаомм', 'Жоаоаоа', 'Гоооол'],
-        input: carSort.body
-      }
-    ]
+    filters: []
   }
 ]
 
@@ -318,10 +270,6 @@ const sortByPrice = () => {
 const openCarModal = (arg: number) => {
   pickedCar.value = arg
   isModalOpened.value = true
-}
-
-const test = () => {
-  console.log(carSort)
 }
 </script>
 

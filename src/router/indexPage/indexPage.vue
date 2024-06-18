@@ -91,6 +91,13 @@ import modalNews from '@/components/modal-news/modal-news.vue'
 import projectButton from '@/components/project-button/project-button.vue'
 import { ref } from 'vue'
 
+type News = {
+  title: String
+  text: String
+  date: String
+  img: String
+}
+
 const brands = [
   {
     name: 'Mercedes-Benz',
@@ -165,21 +172,24 @@ const specialOffers = [
   }
 ]
 
-const allNews = [
+const allNews: Array<News> = [
   {
-    title: 'Новое поступление 21.05.2024',
-    text: 'С большой радостью сообщаем, что в наш онлайн-автосалон поступил ряд новых автомобилей, 2023 года выпуска, среди которых имеются марки BMW, Volkswagen, Mercedes-Benz, Honda, Nissan, Toyota. Новые модели вы сможете увидеть в нашем каталоге в разделе “Новинки”',
-    date: ''
+    title: 'Новое поступление',
+    text: 'С большой радостью сообщаем, что в наш онлайн-автосалон поступил ряд новых автомобилей, 2023 года выпуска, среди которых имеются марки BMW, Volkswagen, Mercedes-Benz, Honda, Nissan, Toyota. Новые модели вы уже можете увидеть в разделе "Каталог"',
+    date: '21.05.2024',
+    img: 'https://garanttransauto.ru/media/MCQrqw3WJYKcsedZVWW2kFvUhDuQkFgC-1280x800.jpg'
   },
   {
     title: 'Тест-драйв',
     text: 'Пройдите бесплатный тест-драйв новинок Haval.',
-    date: ''
+    date: '01.05.24',
+    img: 'https://www.ixbt.com/img/n1/news/2023/6/4/1488x0_1_autohomecar__CjIFVmSv18SAQD6lACJARBf1ujw977_large.jpg'
   },
   {
-    title: 'Обновление сервиса 09.04.24',
-    text: 'Наш сервис быстро развивается и спешим выпустить обновление с изменением и улучшением конфигуратора, работой сайта и отдельных его частей. Полный список изменений:',
-    date: ''
+    title: 'Обновление сервиса',
+    text: 'Наш сервис быстро развивается и спешим выпустить обновление с изменением и улучшением конфигуратора, работой сайта и отдельных его частей. Мы надеемся, что улучшения будут вам по вкусу!',
+    date: '09.04.24',
+    img: ''
   }
 ]
 

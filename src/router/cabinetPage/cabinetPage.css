@@ -61,25 +61,29 @@
   background: none;
   border: none;
   outline: none;
-  cursor: pointer;
   position: relative;
   margin: 0;
   padding: 0;
-  opacity: 0.8;
   text-decoration: none;
 }
 
-.cabinet__button:disabled {
+.cabinet__button_default {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.cabinet__button_disabled {
+  cursor: default;
   opacity: 0.3;
 }
 
 .cabinet__button_active,
-.cabinet__button:hover {
+.cabinet__button_default:hover {
   font-weight: 600;
   opacity: 1;
 }
 
-.cabinet__button::after {
+.cabinet__button_default::after {
   width: 0px;
   height: 1px;
   content: '';
@@ -90,8 +94,8 @@
   transition: all 0.3s ease-in-out;
 }
 
-.cabinet__button_active.cabinet__button::after,
-.cabinet__button:hover::after {
+.cabinet__button_active.cabinet__button_default::after,
+.cabinet__button_default:hover::after {
   width: 100%;
 }
 

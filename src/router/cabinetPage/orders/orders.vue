@@ -4,7 +4,7 @@
     <div class="photos-body">
       <exitButton @click="modalWindow(false)" />
       <div class="main-image">
-        <button class="carousel-button carousel-button_fullsize" @click="">
+        <button class="carousel-button carousel-button_fullsize" @click="openFullSize">
           <img class="carousel-button__img" src="/img/icons/icon_fullsize.svg" alt="<" />
         </button>
         <button
@@ -69,13 +69,13 @@
       </div>
       <div v-if="orderOpened === index" class="order__body">
         <div class="order-info">
-          <div class="order-info__thumb" @click="modalWindow(true, index)">
-            <img
-              class="order-info__img"
-              :src="`/img/cabinet/orders/fakeDB/${fakeDB[index].brand} ${fakeDB[index].model}/1.webp`"
-              alt="?"
-            />
-          </div>
+          <div
+            class="order-info__thumb"
+            :style="{
+              backgroundImage: `url('/img/cabinet/orders/fakeDB/${fakeDB[index].brand} ${fakeDB[index].model}/1.webp')`
+            }"
+            @click="modalWindow(true, index)"
+          ></div>
           <div class="order-texts">
             <h5 class="order-title">{{ `${order.brand} ${order.model} ${order.year}` }}</h5>
             <p class="car-brief">
@@ -86,7 +86,7 @@
             <p class="paystatus">
               {{ `Статус оплаты: ${order.payed ? 'Оплачено' : 'Ожидание оплаты'}` }}
             </p>
-            <p class="carprice">{{ `${order.price} Р` }}</p>
+            <p class="carprice">{{ `${order.price} ₽` }}</p>
           </div>
         </div>
         <div class="delivery-status">
@@ -241,6 +241,12 @@ const openCloseOrder = (index: number) => {
 const showDate = (date: number) => {
   const orderDate = new Date(date).toLocaleDateString()
   return orderDate
+}
+
+const openFullSize = () => {
+  window.open(
+    `/img/cabinet/orders/fakeDB/${fakeDB[galleryIndex.value].brand} ${fakeDB[galleryIndex.value].model}/${photoIndex.value}.webp`
+  )
 }
 </script>
 
