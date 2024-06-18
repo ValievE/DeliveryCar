@@ -2,10 +2,10 @@
   <modal-news
     :is-opened="isNewsModalOpened"
     :info="openedNews"
-    @closeNewsModal="isNewsModalOpened = false"
+    @close-news-modal="modalWindow(false)"
   />
   <section class="section-one">
-    <img class="bg-image" src="/img/bg_img.png" />
+    <img class="bg-image" src="/img/bg_img.png" alt="?" />
     <div class="info-block">
       <h1 class="info-block__title">
         Новый автомобиль <br />
@@ -25,15 +25,12 @@
     </button>
     <div class="carousel__body">
       <div class="carousel__items" :style="{ left: carouselSwap }">
-        <div class="carousel__item carousel_style" v-for="(brand, index) in brands" :key="index">
+        <div v-for="(brand, index) in brands" :key="index" class="carousel__item carousel_style">
           <img class="carousel__img" :src="brand.url" :alt="brand.name" :title="brand.name" />
         </div>
       </div>
     </div>
-    <button
-      class="carousel__button carousel_style"
-      @click="checkLength(), changeCarouselPos('right')"
-    >
+    <button class="carousel__button carousel_style" @click="changeCarouselPos('right')">
       <img src="/img/icons/icon_carousel_right.svg" alt="right" />
     </button>
   </section>
@@ -41,9 +38,9 @@
     <h1 class="section-three__title">КАК РАБОТАЕТ НАШ СЕРВИС</h1>
     <div class="work-steps">
       <div
-        class="work-steps__card work-steps__card_style"
         v-for="(workCard, index) in howWeWork"
         :key="index"
+        class="work-steps__card work-steps__card_style"
       >
         <h2 class="work-steps__title">{{ workCard.title }}</h2>
         <p class="work-steps__text">{{ workCard.text }}</p>
@@ -56,25 +53,25 @@
           <project-button :size="'big'" :color="'orange'" :icon="'arrow'" :text="'Каталог'"
         /></router-link>
       </div>
-      <img class="catalog-banner__img" src="/public/img/vw_golf.png" />
+      <img class="catalog-banner__img" src="/img/vw_golf.png" alt="?" />
     </div>
   </section>
   <section class="section-four">
     <h3 class="section-four__title">АКЦИИ И СПЕЦИАЛЬНЫЕ ПРЕДЛОЖЕНИЯ</h3>
     <div class="special-offers">
-      <div class="special-offer" v-for="(specialOffer, index) in specialOffers" :key="index">
+      <div v-for="(specialOffer, index) in specialOffers" :key="index" class="special-offer">
         <div class="special-offer__info">
           <p class="special-offer__title">{{ specialOffer.title }}</p>
           <p class="special-offer__text">{{ specialOffer.subtitle }}</p>
         </div>
-        <img class="special-offer__img" :src="specialOffer.img" />
+        <img class="special-offer__img" :src="specialOffer.img" alt="?" />
       </div>
     </div>
   </section>
   <section class="section-five">
     <h4 class="section-five__title">Новости</h4>
     <div class="news-block">
-      <div class="news-card" v-for="(news, index) in allNews" :key="index">
+      <div v-for="(news, index) in allNews" :key="index" class="news-card">
         <p class="news-card__title">{{ news.title }}</p>
         <p class="news-card__text">{{ news.text }}</p>
         <project-button
@@ -82,7 +79,7 @@
           :color="'gray'"
           :size="'small'"
           class="news-card__button"
-          @click="openModal(index)"
+          @click="modalWindow(true, index)"
         />
       </div>
     </div>
@@ -189,14 +186,20 @@ const allNews = [
 const isNewsModalOpened = ref(false)
 const openedNews = ref({} as Object)
 
-const openModal = (index: number) => {
-  isNewsModalOpened.value = true
-  // openedNews.value = JSON.stringify(allNews[index])
-  openedNews.value = allNews[index]
-}
-
 const carouselSwap = ref('0px')
 const carouselActualPos = ref(0)
+
+const modalWindow = (arg: boolean, index?: number) => {
+  if (arg) {
+    isNewsModalOpened.value = true
+    document.body.style.overflowY = 'hidden'
+    openedNews.value = allNews[index]
+    return isNewsModalOpened
+  }
+  isNewsModalOpened.value = false
+  document.body.style.overflowY = 'visible'
+  return isNewsModalOpened
+}
 
 const changeCarouselPos = (arg: string) => {
   const carouselMaxWidth =
@@ -204,28 +207,36 @@ const changeCarouselPos = (arg: string) => {
     document.getElementsByClassName('carousel__body')[0].clientWidth
   const carouselMinWidth = 0
 
-  console.log(carouselActualPos, carouselMaxWidth, carouselMinWidth)
+  const carouselStep: number = 280
 
   if (arg === 'right') {
-    carouselActualPos.value -= 200
-    if (carouselActualPos.value < -carouselMaxWidth) {
+    carouselActualPos.value -= carouselStep
+    if (carouselActualPos.value === -carouselMaxWidth - carouselStep) {
       carouselActualPos.value = carouselMinWidth
     }
-    return (carouselSwap.value = `${carouselActualPos.value}px`)
+    if (
+      carouselActualPos.value < -carouselMaxWidth &&
+      carouselActualPos.value !== -carouselMaxWidth
+    ) {
+      carouselActualPos.value = -carouselMaxWidth
+    }
   }
 
   if (arg === 'left') {
-    carouselActualPos.value += 200
-    if (carouselActualPos.value > carouselMinWidth) {
+    carouselActualPos.value += carouselStep
+    if (carouselActualPos.value === carouselMinWidth + carouselStep) {
       carouselActualPos.value = -carouselMaxWidth
     }
-    return (carouselSwap.value = `${carouselActualPos.value}px`)
+    if (
+      carouselActualPos.value > carouselMinWidth &&
+      carouselActualPos.value !== carouselMinWidth
+    ) {
+      carouselActualPos.value = carouselMinWidth
+    }
   }
-}
 
-const checkLength = () => {
-  const aaa = document.getElementsByClassName('carousel__body')
-  console.log(aaa[0].clientWidth)
+  carouselSwap.value = `${carouselActualPos.value}px`
+  return carouselSwap.value
 }
 </script>
 

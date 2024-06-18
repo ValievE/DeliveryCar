@@ -139,6 +139,7 @@
   justify-content: end;
   align-items: center;
   overflow: hidden;
+  z-index: 1;
 }
 
 .filters-hide-btn-body {
@@ -231,6 +232,25 @@
   gap: 20px 30px;
   box-sizing: border-box;
   padding: 20px 40px;
+  position: relative;
+  z-index: 0;
+}
+
+.catalog-warning {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 600px;
+  height: fit-content;
+  overflow: hidden;
+  opacity: 0.2;
+}
+
+.catalog-warning__img {
+  width: 100%;
 }
 
 .catalog-item {

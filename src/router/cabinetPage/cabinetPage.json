@@ -1,0 +1,60 @@
+[
+  {
+    "brand": "Volkswagen",
+    "model": "Golf R (VII)",
+    "date": 1727136001000,
+    "year": 2024,
+    "mileage": 0,
+    "payed": true,
+    "price": 4599000,
+    "orderStage": 2,
+    "info": {
+      "color": "Белый",
+      "engine": "Бензин 2.0л",
+      "hp": 320,
+      "body": "Хэтчбек",
+      "du": "Полный"
+    },
+    "photos": [
+      "1.webp",
+      "2.webp",
+      "3.webp",
+      "4.webp",
+      "5.webp",
+      "6.webp",
+      "7.webp",
+      "8.webp",
+      "9.webp",
+      "10.webp",
+      "11.webp"
+    ]
+  },
+  {
+    "brand": "Mercedes-Benz",
+    "model": "E-Class 200",
+    "date": 1729468801000,
+    "year": 2020,
+    "payed": false,
+    "price": 5890000,
+    "mileage": 42100,
+    "orderStage": 1,
+    "info": {
+      "color": "Белый",
+      "engine": "Бензин 2.0л",
+      "hp": 197,
+      "body": "Купе",
+      "du": "Задний"
+    },
+    "photos": [
+      "1.webp",
+      "2.webp",
+      "3.webp",
+      "4.webp",
+      "5.webp",
+      "6.webp",
+      "7.webp",
+      "8.webp",
+      "9.webp"
+    ]
+  }
+]

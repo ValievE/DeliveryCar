@@ -1,9 +1,13 @@
 <template>
-  <div class="modal-zone" v-if="isOpened">
+  <div v-if="isOpened" class="modal-zone">
     <div class="modal-window">
-      <exitButton @click="$emit('closeCarModal')" />
+      <exitButton @click="modalCarsEmits('closeCarModal')" />
       <div class="section-one">
-        <img class="section-one__img" :src="fakeNewCarsDB[carIndex ? carIndex : 0].photos[0]" />
+        <img
+          class="section-one__img"
+          :src="fakeNewCarsDB[carIndex ? carIndex : 0].photos[0]"
+          alt="?"
+        />
         <div class="section-one__info-block">
           <h3 class="car-name">
             {{
@@ -37,10 +41,12 @@ import projectButton from '@/components/project-button/project-button.vue'
 import { toRefs } from 'vue'
 import catalogPageJSON from '@/router/catalogPage/catalogPage.json'
 
-const modalCarProps = defineProps({ isOpened: Boolean, carIndex: Number })
+const modalCarProps = defineProps({ isOpened: Boolean, carIndex: { type: Number, default: 0 } })
 const { isOpened, carIndex } = toRefs(modalCarProps)
 
-type newCar = {
+const modalCarsEmits = defineEmits(['closeCarModal'])
+
+type NewCar = {
   brand: String
   model: String
   body: String
@@ -56,7 +62,7 @@ type newCar = {
   }
 }
 
-const fakeNewCarsDB: Array<newCar> = catalogPageJSON
+const fakeNewCarsDB: Array<NewCar> = catalogPageJSON
 </script>
 
 <style src="./modal-car.css" scoped />

@@ -1,7 +1,7 @@
 <template>
-  <div class="modal-zone" v-if="isOpened">
+  <div v-if="isOpened" class="modal-zone">
     <div class="modal-window">
-      <exitButton @click="$emit('closeNewsModal')" />
+      <exitButton @click="modalNewsEmits('closeNewsModal')" />
       <p>{{ actualNews }}</p>
     </div>
   </div>
@@ -13,10 +13,15 @@ import { ref, toRefs } from 'vue'
 
 const modalNewsProps = defineProps({
   isOpened: Boolean,
-  info: Object || undefined
+  info: {
+    type: Object || undefined,
+    default: ''
+  }
 })
 
 const { isOpened, info } = toRefs(modalNewsProps)
+
+const modalNewsEmits = defineEmits(['closeNewsModal'])
 
 const actualNews = ref(info)
 </script>

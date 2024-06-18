@@ -19,6 +19,7 @@
         'project-button-img_orange': buttonProps.color === 'orange'
       }"
       :src="activeIcon"
+      alt="?"
     />
     <span class="project-button-title">{{ buttonProps.text }}</span>
   </button>
@@ -28,10 +29,22 @@
 import { ref } from 'vue'
 
 const buttonProps = defineProps({
-  size: String,
-  color: String,
-  text: String,
-  icon: String
+  size: {
+    type: String,
+    default: ''
+  },
+  color: {
+    type: String,
+    default: ''
+  },
+  text: {
+    type: String,
+    default: ''
+  },
+  icon: {
+    type: String,
+    default: ''
+  }
 })
 
 const activeIcon = ref('')
