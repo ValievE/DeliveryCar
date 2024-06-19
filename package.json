@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@babel/core": "^7.24.7",
     "@vue/eslint-config-airbnb-with-typescript": "^8.0.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
