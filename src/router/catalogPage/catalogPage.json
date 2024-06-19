@@ -1,5 +1,6 @@
 [
   {
+    "carId": 0,
     "brand": "BMW",
     "model": "M4",
     "body": "Купе",
@@ -15,6 +16,7 @@
     }
   },
   {
+    "carId": 1,
     "brand": "BMW",
     "model": "M4",
     "body": "Купе",
@@ -30,6 +32,7 @@
     }
   },
   {
+    "carId": 2,
     "brand": "BMW",
     "model": "5-series",
     "body": "Седан",
@@ -45,6 +48,7 @@
     }
   },
   {
+    "carId": 3,
     "brand": "Mercedes-Benz",
     "model": "S-Class(S450)",
     "body": "Седан",
@@ -60,6 +64,7 @@
     }
   },
   {
+    "carId": 4,
     "brand": "Mercedes-Benz",
     "model": "V-Class(V300d)",
     "body": "Минивэн",
@@ -75,6 +80,7 @@
     }
   },
   {
+    "carId": 5,
     "brand": "Haval",
     "model": "Jolion",
     "body": "Внедорожник",
@@ -90,6 +96,7 @@
     }
   },
   {
+    "carId": 6,
     "brand": "Haval",
     "model": "Dargo",
     "body": "Внедорожник",
@@ -105,6 +112,7 @@
     }
   },
   {
+    "carId": 7,
     "brand": "Porsche",
     "model": "Cayenne",
     "body": "Внедорожник",
@@ -120,6 +128,7 @@
     }
   },
   {
+    "carId": 8,
     "brand": "Toyota",
     "model": "Land Cruiser Prado (150 Series)",
     "body": "Внедорожник",
@@ -135,6 +144,7 @@
     }
   },
   {
+    "carId": 9,
     "brand": "Toyota",
     "model": "Highlander",
     "body": "Внедорожник",
@@ -150,6 +160,7 @@
     }
   },
   {
+    "carId": 10,
     "brand": "Toyota",
     "model": "Camry",
     "body": "Седан",
@@ -165,6 +176,7 @@
     }
   },
   {
+    "carId": 11,
     "brand": "Volkswagen",
     "model": "ID.6 Crozz Lite Pro",
     "body": "Внедорожник",
@@ -180,6 +192,7 @@
     }
   },
   {
+    "carId": 12,
     "brand": "Volkswagen",
     "model": "Touareg",
     "body": "Внедорожник",
@@ -195,6 +208,7 @@
     }
   },
   {
+    "carId": 13,
     "brand": "Geely",
     "model": "Okavango Flagship",
     "body": "Внедорожник",
@@ -210,6 +224,7 @@
     }
   },
   {
+    "carId": 14,
     "brand": "Geely",
     "model": "Monjaro",
     "body": "Внедорожник",

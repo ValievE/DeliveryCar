@@ -2,7 +2,7 @@
   <section class="cabinet">
     <h1 class="cabinet__title">Личный кабинет</h1>
     <div class="cabinet__info">
-      <h2 class="cabinet__greeting">{{ `Добро пожаловать, Иван!` }}</h2>
+      <h2 class="cabinet__greeting">{{ `Добро пожаловать, Emil Valiev!` }}</h2>
       <div class="cabinet__flow">
         <div class="cabinet__menu" :class="{ cabinet__menu_disabled: !activeMenu }">
           <router-link
@@ -21,8 +21,9 @@
               cabinet__button_disabled: !menuItem.isActive
             }"
             @click="changeMenu(index)"
-            >{{ menuItem.title }}</router-link
           >
+            {{ menuItem.title }}
+          </router-link>
         </div>
         <div class="cabinet__active-info" :class="{ 'cabinet__active-info_disabled': !activeMenu }">
           <router-view />
@@ -58,6 +59,10 @@ menuItems.forEach((menuItem) => {
 })
 
 const changeMenu = (arg: number) => {
+  if (arg === 3) {
+    document.getElementsByTagName('body')[0].scrollIntoView({ block: 'start', inline: 'center' })
+  }
+
   if (menuItems[arg].isActive) {
     activeMenu.value = menuItems[arg].url
     return activeMenu

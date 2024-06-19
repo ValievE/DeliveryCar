@@ -3,7 +3,7 @@
     <modalCar
       :is-opened="isModalOpened"
       :car-index="pickedCar"
-      @close-car-modal="isModalOpened = false"
+      @close-car-modal="openCarModal(false)"
     />
     <h1 class="catalog-title">Каталог</h1>
     <div class="selectors">
@@ -38,7 +38,7 @@
           :style="{ width: isFiltersOpened ? '250px' : '0' }"
         >
           <div class="filters-hide-btn" :style="{ width: isFiltersOpened ? '45px' : '35px' }">
-            <button class="filters-hide-btn-body" @click="openFilters">
+            <button class="filters-hide-btn-body" @click="isFiltersOpened = !isFiltersOpened">
               <img
                 class="filters-hide-btn-img"
                 src="/img/icons/icon_triangle_45deg.svg"
@@ -58,7 +58,7 @@
                   class="filters__select"
                   @change="sortByPrice"
                 >
-                  <option class="filters__option" value="default">По-умолчанию</option>
+                  <option class="filters__option" value="default" selected>По-умолчанию</option>
                   <option class="filters__option" value="down">По убыванию цены</option>
                   <option class="filters__option" value="up">По возрастанию цены</option>
                 </select>
@@ -69,8 +69,14 @@
                 class="filters__list-item"
               >
                 <label class="filters__label" :for="filter.name">{{ filter.name }}</label>
-                <select :id="filter.name" v-model="carSort.model" class="filters__select">
-                  <option class="filters__option" value="">Выберите параметр</option>
+                <select
+                  :id="filter.name"
+                  v-model="filter.input"
+                  placeholder="Выберите значение"
+                  class="filters__select"
+                  @change="acceptFilters"
+                >
+                  <option class="filters__option" :value="''" selected>Выберите параметр</option>
                   <option
                     v-for="(filterOpt, FOindex) in filter.values"
                     :key="FOindex"
@@ -82,6 +88,12 @@
                 </select>
               </div>
             </div>
+            <projectButton
+              :size="'medium'"
+              :color="'orange'"
+              :text="'Применить'"
+              @click="acceptFilters"
+            />
           </div>
         </div>
         <div class="catalog-list">
@@ -100,7 +112,10 @@
               }}</span>
               <span class="catalog-item__price">{{ `${carItem.price} Р` }}</span>
             </div>
-            <button class="catalog-item__button" @click="openCarModal(index)">
+            <button
+              class="catalog-item__button"
+              @click="openCarModal(true, carItem.carId as number)"
+            >
               Узнать подробности
             </button>
           </div>
@@ -111,11 +126,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import projectButton from '@/components/project-button/project-button.vue'
+import { ref } from 'vue'
 import modalCar from '@/components/modal-car/modal-car.vue'
 import catalogPageJSON from './catalogPage.json'
 
 type NewCar = {
+  carId: Number
   brand: String
   model: String
   body: String
@@ -141,17 +158,6 @@ const fakeConfigCarsDB: Array<NewCar> = []
 const actualCarList = ref([] as Array<NewCar>)
 const bufferedCarList = ref([] as Array<NewCar>)
 const isModalOpened = ref(false as boolean)
-const carSort = reactive({
-  brand: '',
-  model: '',
-  year: 0,
-  body: ''
-})
-
-const openFilters = () => {
-  isFiltersOpened.value = !isFiltersOpened.value
-  return isFiltersOpened
-}
 
 const setSelector = (index: number) => {
   activeSelector.value = index
@@ -183,22 +189,17 @@ const fakeDB = [
       {
         name: 'Производитель',
         values: ['BMW', 'Geely', 'Haval', 'Mercedes-Benz', 'Porsche', 'Toyota', 'Volkswagen'],
-        input: carSort.brand
-      },
-      {
-        name: 'Модель',
-        values: ['Выберите марку'],
-        input: carSort.model
+        input: '' as string
       },
       {
         name: 'Год производства',
         values: [2022, 2023, 2024],
-        input: carSort.year
+        input: '' as number | ''
       },
       {
         name: 'Кузов',
-        values: ['Хетчбек', 'Седан', 'Универсал', 'Внедорожник', 'Минивэн'],
-        input: carSort.body
+        values: ['Хетчбек', 'Седан', 'Купе', 'Универсал', 'Внедорожник', 'Минивэн'],
+        input: '' as string
       }
     ]
   },
@@ -214,62 +215,62 @@ const fakeDB = [
   }
 ]
 
+const carSort = ref({
+  brand: '' as string,
+  year: '' as number | '',
+  body: '' as string
+})
+
 const sortByPrice = () => {
-  actualCarList.value.forEach((carObject) => {
-    if (bufferedCarList.value.length === 0) {
-      bufferedCarList.value.push(carObject)
-      return
-    }
-
-    if (carObject.price < bufferedCarList.value[0].price) {
-      bufferedCarList.value.splice(0, 0, carObject)
-      return
-    }
-
-    let lastHighIndex = 0 as number
-
-    bufferedCarList.value.forEach((bCarObject, index) => {
-      if (carObject.price > bCarObject.price) {
-        lastHighIndex = index + 1
-        return
-      }
-
-      if (carObject.price === bCarObject.price) {
-        lastHighIndex = index + 1
-      }
-    })
-
-    if (lastHighIndex !== 0) {
-      bufferedCarList.value.splice(lastHighIndex, 0, carObject)
-    }
-  })
-
-  actualCarList.value = [] as Array<NewCar>
-
-  if (sortEvent.value === 'default') {
-    fakeNewCarsDB.forEach((item) => {
-      actualCarList.value.push(item)
-    })
-  }
-
   if (sortEvent.value === 'up') {
-    bufferedCarList.value.forEach((item) => {
-      actualCarList.value.push(item)
-    })
+    actualCarList.value.sort(
+      (firstItem, secondItem) => (firstItem.price as number) - (secondItem.price as number)
+    )
   }
 
   if (sortEvent.value === 'down') {
-    bufferedCarList.value.forEach((item) => {
-      actualCarList.value.splice(0, 0, item)
-    })
+    actualCarList.value.sort(
+      (firstItem, secondItem) => (firstItem.price as number) - (secondItem.price as number)
+    )
   }
 
-  bufferedCarList.value = [] as Array<NewCar>
+  if (sortEvent.value === 'default') {
+    actualCarList.value = [] as Array<NewCar>
+    bufferedCarList.value.forEach((item) => {
+      actualCarList.value.push(item)
+    })
+  }
 }
 
-const openCarModal = (arg: number) => {
-  pickedCar.value = arg
-  isModalOpened.value = true
+const acceptFilters = () => {
+  carSort.value.brand = fakeDB[0].filters[0].input as string
+  carSort.value.year = fakeDB[0].filters[1].input as number
+  carSort.value.body = fakeDB[0].filters[2].input as string
+  actualCarList.value = [] as Array<NewCar>
+  bufferedCarList.value = [] as Array<NewCar>
+
+  fakeNewCarsDB.forEach((item) => {
+    if (item.brand === carSort.value.brand || !carSort.value.brand) {
+      if (item.info.year === carSort.value.year || !carSort.value.year) {
+        if (item.body === carSort.value.body || !carSort.value.body) {
+          bufferedCarList.value.push(item)
+          actualCarList.value.push(item)
+        }
+      }
+    }
+  })
+}
+
+const openCarModal = (float: boolean, index?: number) => {
+  if (float) {
+    isModalOpened.value = true
+    document.body.style.overflowY = 'hidden'
+    pickedCar.value = index
+    return isModalOpened
+  }
+  isModalOpened.value = false
+  document.body.style.overflowY = 'visible'
+  return isModalOpened
 }
 </script>
 

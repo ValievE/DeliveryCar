@@ -63,7 +63,7 @@
         <img
           class="order__hide-img"
           :class="{ 'order__hide-img_active': orderOpened === index }"
-          src="/public/img/icons/icon_triangle.svg"
+          src="/img/icons/icon_triangle.svg"
           alt="🡣"
         />
       </div>

@@ -8,11 +8,20 @@
   width: fit-content;
 }
 
+.project-button[disabled] {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.project-button[disabled] span {
+  cursor: default;
+}
+
 .project-button_gray {
   background-color: rgb(180, 180, 180);
 }
 
-.project-button_gray:hover {
+.project-button_gray:hover:enabled {
   background-color: rgb(161, 161, 161);
 }
 
@@ -20,7 +29,7 @@
   background-color: rgb(255, 153, 0);
 }
 
-.project-button_orange:hover {
+.project-button_orange:hover:enabled {
   background-color: rgb(218, 131, 0);
 }
 

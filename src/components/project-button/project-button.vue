@@ -8,6 +8,7 @@
       'project-button_big': buttonProps.size === 'big'
     }"
     class="project-button"
+    :disabled="buttonDisabled"
   >
     <img
       v-if="activeIcon !== ''"
@@ -26,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 
 const buttonProps = defineProps({
   size: {
@@ -44,10 +45,16 @@ const buttonProps = defineProps({
   icon: {
     type: String,
     default: ''
+  },
+  buttonDisabled: {
+    type: Boolean,
+    default: false
   }
 })
 
 const activeIcon = ref('')
+
+const { buttonDisabled } = toRefs(buttonProps)
 
 if (buttonProps.icon === 'arrow') {
   activeIcon.value = '/img/icons/icon_arrow.svg'

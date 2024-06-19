@@ -106,10 +106,12 @@
 .carousel-img {
   width: 100%;
   border: none;
+  opacity: 0.5;
 }
 
 .carousel-img_active {
   box-shadow: 0 0 0px 2px #ff5c00;
+  opacity: 1;
 }
 
 .orders {

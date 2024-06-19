@@ -11,6 +11,7 @@
 
 body {
   position: relative;
+  overflow-x: hidden;
 }
 
 .wrapper {
@@ -51,6 +52,10 @@ img {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+.cabinet-button {
+  text-decoration: none;
 }
 
 .header-logo-link {

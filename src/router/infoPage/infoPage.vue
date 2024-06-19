@@ -42,8 +42,8 @@
         <div class="responsibilities">
           <h5 class="responsibility-title">Обязанности:</h5>
           <p
-            v-for="(responsibility, index) in vacancy.responsibilities"
-            :key="index"
+            v-for="(responsibility, responsibilityIndex) in vacancy.responsibilities"
+            :key="responsibilityIndex"
             class="responsibility"
           >
             {{ `• ${responsibility}` }}
@@ -51,7 +51,11 @@
         </div>
         <div class="requirements">
           <h5 class="requirement-title">Требования:</h5>
-          <p v-for="(requirement, index) in vacancy.requirements" :key="index" class="requirement">
+          <p
+            v-for="(requirement, requirementIndex) in vacancy.requirements"
+            :key="requirementIndex"
+            class="requirement"
+          >
             {{ `• ${requirement}` }}
           </p>
         </div>

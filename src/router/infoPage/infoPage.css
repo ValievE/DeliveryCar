@@ -121,6 +121,9 @@
 .vacancy-payday {
   font-size: 20px;
   font-weight: 500;
+  padding: 10px 30px;
+  background-color: rgb(255, 136, 0);
+  border-radius: 40px;
 }
 .requirements,
 .responsibilities {

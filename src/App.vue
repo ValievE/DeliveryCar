@@ -7,23 +7,39 @@
       <nav class="nav-bar">
         <router-link to="/" class="nav-bar__item">Главная</router-link>
         <router-link to="/catalog" class="nav-bar__item">Каталог</router-link>
-        <router-link to="/cabinet" class="nav-bar__item">Доставка</router-link>
+        <router-link to="/delivery" class="nav-bar__item">Доставка</router-link>
         <router-link to="/" class="nav-bar__item" @click="rollTo('section-three')"
           >О нас</router-link
         >
       </nav>
       <a href="tel:+79260003939" class="phone-link">+7 (926) 000-39-39</a>
-      <project-button
-        :text="'Личный кабинет'"
-        :size="'small'"
-        :color="'gray'"
-        :icon="'user'"
-        @click="modalWindow(true)"
-      />
+      <router-link class="cabinet-button" :to="isLoggedIn ? '/cabinet' : ''">
+        <project-button
+          :text="isLoggedIn ? loggedUser.name : 'Личный кабинет'"
+          :size="'small'"
+          :color="'gray'"
+          :icon="'user'"
+          @click="isLoggedIn ? '' : modalWindow(true)"
+      /></router-link>
     </div>
   </header>
 
-  <modal-auth :is-opened="isAuthModalOpened" @close-auth-modal="modalWindow(false)" />
+  <modal-auth
+    :is-opened="isAuthModalOpened"
+    :is-logged-in="isLoggedIn"
+    :user-info="loggedUser.name"
+    @is-logged-in="
+      (newValue) => {
+        isLoggedIn = newValue
+      }
+    "
+    @updated-name="
+      (newName) => {
+        loggedUser.name = newName
+      }
+    "
+    @close-auth-modal="modalWindow(false)"
+  />
   <router-view />
   <footer class="footer">
     <div class="footer__body">
@@ -47,8 +63,9 @@
           :to="footerLink.link"
           class="footer__link"
           @click="rollToTop"
-          >{{ footerLink.name }}</router-link
         >
+          {{ footerLink.name }}
+        </router-link>
       </div>
       <span class="footer__text">© DELIVERYCAR 2024. ВСЕ ПРАВА НЕ ЗАЩИЩЕНЫ</span>
     </div>
@@ -58,12 +75,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
-
 import modalAuth from './components/modal-auth/modal-auth.vue'
 import projectButton from './components/project-button/project-button.vue'
 
-const isAuthModalOpened = ref(false)
-
+const isAuthModalOpened = ref(false as boolean)
+const isLoggedIn = ref(false as boolean)
+const loggedUser = ref({
+  name: '' as string
+})
 const footerLinks = [
   {
     name: 'Партнерская программа',

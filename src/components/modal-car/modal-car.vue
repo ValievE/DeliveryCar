@@ -16,9 +16,18 @@
           </h3>
           <div class="car-description">
             <div class="car-description__item">
-              <p class="car-description__text"></p>
-              <div class="car-description__line"></div>
-              <p class="car-description__text"></p>
+              <p class="car-description__text">{{ carParameters.body }}:</p>
+              <p class="car-description__text">{{ fakeNewCarsDB[carIndex].body }}</p>
+            </div>
+            <div class="car-description__item">
+              <p class="car-description__text">{{ carParameters.inStock }}:</p>
+              <p class="car-description__text">
+                {{
+                  fakeNewCarsDB[carIndex].inStock
+                    ? `${fakeNewCarsDB[carIndex].inStock} ед.`
+                    : 'Под заказ'
+                }}
+              </p>
             </div>
           </div>
           <div class="buy-menu">
@@ -29,7 +38,19 @@
       </div>
 
       <div class="info-block">
-        <div class="info-block__item"></div>
+        <div
+          v-for="(carInfo, carInfoIndex) in Object.values(fakeNewCarsDB[carIndex].info)"
+          :key="carInfoIndex"
+          class="info-block__item"
+        >
+          <span class="parameter-title">{{
+            carParameters.info[Object.keys(fakeNewCarsDB[carIndex].info)[carInfoIndex]]
+          }}</span>
+          <div class="parameter-line"></div>
+          <span class="parameter-value">{{
+            `${carInfo} ${Object.keys(fakeNewCarsDB[carIndex].info)[carInfoIndex] === 'year' ? 'г.' : ''} ${Object.keys(fakeNewCarsDB[carIndex].info)[carInfoIndex] === 'hp' ? 'л.с.' : ''}`
+          }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -59,6 +80,36 @@ type NewCar = {
     kpp: String
     du: String
     fuel: String
+  }
+}
+
+type NewCarParams = {
+  brand: String
+  model: String
+  body: String
+  inStock: String
+  price: String
+  info: {
+    year: String
+    hp: String
+    kpp: String
+    du: String
+    fuel: String
+  }
+}
+
+const carParameters: NewCarParams = {
+  brand: 'Производитель',
+  model: 'Модель',
+  body: 'Кузов',
+  inStock: 'Наличие',
+  price: 'Цена',
+  info: {
+    year: 'Год',
+    hp: 'Мощность',
+    kpp: 'Коробка передач',
+    du: 'Привод',
+    fuel: 'Двигатель'
   }
 }
 

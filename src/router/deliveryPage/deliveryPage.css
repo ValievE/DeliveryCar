@@ -1,0 +1,76 @@
+.delivery {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 50px;
+  position: relative;
+}
+
+.delivery-bg {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  left: 25%;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+}
+
+.delivery-title {
+  font-size: 34px;
+  text-transform: uppercase;
+}
+
+.delivery-overflow {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.delivery-stages {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background-color: white;
+  padding-right: 20px;
+}
+
+.delivery-stage {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 15% 85%;
+  grid-template-rows: 35px 1fr;
+  box-sizing: border-box;
+  padding: 20px 0;
+  align-items: center;
+}
+
+.delivery-stage-number {
+  grid-column: 1;
+  grid-row: span 2;
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  background-color: rgba(8, 8, 53, 0.4);
+  border-radius: 50%;
+  height: 80px;
+  width: 80px;
+  margin: 0 auto;
+}
+
+.delivery-stage-title {
+  text-transform: uppercase;
+  grid-row: 1;
+  grid-column: 2;
+  font-weight: 600;
+}
+
+.delivery-stage-text {
+  line-height: 25px;
+  grid-row: 2;
+  grid-column: 2;
+}
