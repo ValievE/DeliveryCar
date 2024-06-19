@@ -165,6 +165,7 @@ const setSelector = (index: number) => {
   if (index === 0) {
     fakeNewCarsDB.forEach((item) => {
       actualCarList.value.push(item)
+      bufferedCarList.value.push(item)
     })
   }
 
@@ -230,7 +231,7 @@ const sortByPrice = () => {
 
   if (sortEvent.value === 'down') {
     actualCarList.value.sort(
-      (firstItem, secondItem) => (firstItem.price as number) - (secondItem.price as number)
+      (firstItem, secondItem) => (secondItem.price as number) - (firstItem.price as number)
     )
   }
 
