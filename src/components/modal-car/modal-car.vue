@@ -44,7 +44,7 @@
           class="info-block__item"
         >
           <span class="parameter-title">{{
-            carParameters.info[Object.keys(fakeNewCarsDB[carIndex].info)[carInfoIndex]]
+            (carParameters.info as any)[Object.keys(fakeNewCarsDB[carIndex].info)[carInfoIndex]]
           }}</span>
           <div class="parameter-line"></div>
           <span class="parameter-value">{{
@@ -67,6 +67,14 @@ const { isOpened, carIndex } = toRefs(modalCarProps)
 
 const modalCarsEmits = defineEmits(['closeCarModal'])
 
+type CarParamsInfo1 = {
+  year: Number
+  hp: Number
+  kpp: String
+  du: String
+  fuel: String
+}
+
 type NewCar = {
   brand: String
   model: String
@@ -74,28 +82,24 @@ type NewCar = {
   photos: Array<string>
   inStock: Number
   price: Number
-  info: {
-    year: Number
-    hp: Number
-    kpp: String
-    du: String
-    fuel: String
-  }
+  info: CarParamsInfo1
 }
 
-type NewCarParams = {
+type CarParamsInfo = {
+  year: String
+  hp: String
+  kpp: String
+  du: String
+  fuel: String
+}
+
+interface NewCarParams {
   brand: String
   model: String
   body: String
   inStock: String
   price: String
-  info: {
-    year: String
-    hp: String
-    kpp: String
-    du: String
-    fuel: String
-  }
+  info: CarParamsInfo
 }
 
 const carParameters: NewCarParams = {
@@ -110,9 +114,8 @@ const carParameters: NewCarParams = {
     kpp: 'Коробка передач',
     du: 'Привод',
     fuel: 'Двигатель'
-  }
+  } as CarParamsInfo
 }
-
 const fakeNewCarsDB: Array<NewCar> = catalogPageJSON
 </script>
 

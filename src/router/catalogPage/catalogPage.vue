@@ -262,7 +262,7 @@ const acceptFilters = () => {
 }
 
 const openCarModal = (float: boolean, index?: number) => {
-  if (float && index) {
+  if (float && index !== undefined) {
     isModalOpened.value = true
     document.body.style.overflowY = 'hidden'
     pickedCar.value = index
