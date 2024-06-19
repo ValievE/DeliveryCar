@@ -200,7 +200,7 @@ const carouselSwap = ref('0px')
 const carouselActualPos = ref(0)
 
 const modalWindow = (arg: boolean, index?: number) => {
-  if (arg) {
+  if (arg && index) {
     isNewsModalOpened.value = true
     document.body.style.overflowY = 'hidden'
     openedNews.value = allNews[index]

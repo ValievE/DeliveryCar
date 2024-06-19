@@ -218,7 +218,7 @@ const galleryIndex = ref(NaN as number)
 const photoIndex = ref(1 as number)
 
 const modalWindow = (arg: boolean, index?: number) => {
-  if (arg) {
+  if (arg && index) {
     orderGalleryOpened.value = true
     document.body.style.overflowY = 'hidden'
     galleryIndex.value = index
