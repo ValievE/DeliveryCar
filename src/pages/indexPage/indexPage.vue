@@ -15,7 +15,9 @@
         Покупка нового автомобиля это всегда приятно, а если убрать долгое оформление в автосалоне,
         бумажную волокиту, то еще лучше!
       </p>
-      <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'" />
+      <router-link class="info-block__button" :to="{ name: 'delivery' }">
+        <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'"
+      /></router-link>
     </div>
   </section>
   <section class="section-two">

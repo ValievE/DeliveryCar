@@ -1,8 +1,15 @@
 <template>
-  <section class="cabinet">
+  <div v-if="!isLoggedIn" class="cabinet-warning">
+    <p class="cabinet-warning__icon">{{ `:(` }}</p>
+    <p class="cabinet-warning__text">
+      Для доступа в кабинет нужна авторизация <br />
+      (логин: admin, пароль: admin)
+    </p>
+  </div>
+  <section v-if="isLoggedIn" class="cabinet">
     <h1 class="cabinet__title">Личный кабинет</h1>
     <div class="cabinet__info">
-      <h2 class="cabinet__greeting">{{ `Добро пожаловать, Emil Valiev!` }}</h2>
+      <h2 class="cabinet__greeting">{{ `Добро пожаловать, ${loggedUser}` }}</h2>
       <div class="cabinet__flow">
         <div class="cabinet__menu" :class="{ cabinet__menu_disabled: !activeMenu }">
           <router-link
@@ -45,10 +52,15 @@ type CabMenu = {
 
 const cabinetProps = defineProps({
   mobileMediaSize: Boolean,
-  tabletMediaSize: Boolean
+  tabletMediaSize: Boolean,
+  isLoggedIn: Boolean,
+  loggedUser: {
+    type: String,
+    default: ''
+  }
 })
 
-const { mobileMediaSize, tabletMediaSize } = toRefs(cabinetProps)
+const { mobileMediaSize, tabletMediaSize, isLoggedIn, loggedUser } = toRefs(cabinetProps)
 
 const router = useRouter()
 const activeMenu = ref('' as CabMenu['url'] | '')

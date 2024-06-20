@@ -55,7 +55,7 @@
       <a href="tel:+79260003939" class="phone-link">+7 (926) 000-39-39</a>
       <router-link class="cabinet-button" :to="isLoggedIn ? '/cabinet' : ''">
         <project-button
-          :text="'Личный кабинет'"
+          :text="isLoggedIn ? loggedUser.name : 'Личный кабинет'"
           :size="mobileMediaRequests.isActive ? 'big' : 'small'"
           :color="'gray'"
           :icon="'user'"
@@ -71,11 +71,23 @@
     :is-opened="isAuthModalOpened"
     :is-logged-in="isLoggedIn"
     :user-info="loggedUser.name"
+    @updated-name="
+      (arg) => {
+        loggedUser.name = arg
+      }
+    "
+    @is-logged-in="
+      (arg) => {
+        isLoggedIn = arg
+      }
+    "
     @close-auth-modal="modalWindow(false)"
   />
   <router-view
     :mobile-media-size="mobileMediaRequests.isActive"
     :tablet-media-size="tabletMediaRequests.isActive"
+    :logged-user="loggedUser.name"
+    :is-logged-in="isLoggedIn"
   />
   <footer class="footer">
     <div class="footer__body">
@@ -134,7 +146,7 @@ import modalAuth from './components/modal-auth/modal-auth.vue'
 import projectButton from './components/project-button/project-button.vue'
 
 const isAuthModalOpened = ref(false as boolean)
-const isLoggedIn = ref(false as boolean)
+const isLoggedIn = ref<boolean>(false)
 const loggedUser = ref({ name: '' as string })
 const isHeaderBurgerOpened = ref(false)
 const isFooterBurgerOpened = ref(false)

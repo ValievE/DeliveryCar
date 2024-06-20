@@ -49,6 +49,10 @@
   width: 450px;
 }
 
+.info-block__button {
+  text-decoration: none;
+}
+
 .section-two {
   display: flex;
   gap: 30px;

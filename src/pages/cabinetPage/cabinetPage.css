@@ -1,3 +1,30 @@
+.cabinet-warning {
+  width: 100%;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.cabinet-warning__icon {
+  rotate: 90deg;
+  font-size: 152px;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cabinet-warning__text {
+  font-weight: 500;
+  font-size: 24px;
+  text-align: center;
+  line-height: 34px;
+}
+
 .cabinet {
   width: 100%;
   display: flex;
