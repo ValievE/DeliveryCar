@@ -88,6 +88,16 @@
     :tablet-media-size="tabletMediaRequests.isActive"
     :logged-user="loggedUser.name"
     :is-logged-in="isLoggedIn"
+    @is-logged-in="
+      (arg: boolean) => {
+        isLoggedIn = arg
+      }
+    "
+    @logged-user="
+      (arg: string) => {
+        loggedUser.name = ''
+      }
+    "
   />
   <footer class="footer">
     <div class="footer__body">

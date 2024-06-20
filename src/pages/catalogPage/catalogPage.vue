@@ -39,6 +39,7 @@
       <div class="catalog-window__header">
         <p class="catalog-window__title">{{ fakeDB[activeSelector].title }}</p>
         <projectButton
+          v-if="mobileMediaSize && fakeDB[activeSelector].filters.length > 0"
           :text="'Фильтры'"
           :size="'small'"
           :color="'orange'"

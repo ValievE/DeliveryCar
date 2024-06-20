@@ -27,12 +27,16 @@
               cabinet__button_default: menuItem.isActive,
               cabinet__button_disabled: !menuItem.isActive
             }"
-            @click="changeMenu(index)"
+            @click="changeMenu(index), exit(index)"
           >
             {{ menuItem.title }}
           </router-link>
         </div>
-        <div class="cabinet__active-info" :class="{ 'cabinet__active-info_disabled': !activeMenu }">
+        <div
+          v-if="activeMenu"
+          class="cabinet__active-info"
+          :class="{ 'cabinet__active-info_disabled': !activeMenu }"
+        >
           <router-view :mobile-media-size="mobileMediaSize" :tablet-media-size="tabletMediaSize" />
         </div>
       </div>
@@ -41,8 +45,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, toRefs, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 type CabMenu = {
   title: String
@@ -60,9 +64,12 @@ const cabinetProps = defineProps({
   }
 })
 
+const cabinetEmits = defineEmits(['loggedUser', 'isLoggedIn'])
+
 const { mobileMediaSize, tabletMediaSize, isLoggedIn, loggedUser } = toRefs(cabinetProps)
 
 const router = useRouter()
+const route = useRoute()
 const activeMenu = ref('' as CabMenu['url'] | '')
 const menuItems: Array<CabMenu> = [
   { title: 'Заказы', url: 'orders', isActive: true },
@@ -88,6 +95,22 @@ const changeMenu = (arg: number) => {
   }
   return activeMenu.value
 }
+
+const exit = (arg: number) => {
+  if (arg === 3) {
+    cabinetEmits('loggedUser', '')
+    cabinetEmits('isLoggedIn', false)
+  }
+}
+
+watch(
+  () => route.name,
+  (newValue) => {
+    if (newValue === 'cabinet') {
+      activeMenu.value = ''
+    }
+  }
+)
 </script>
 
 <style src="./cabinetPage.css" />
