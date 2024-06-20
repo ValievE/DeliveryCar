@@ -26,7 +26,7 @@
           </router-link>
         </div>
         <div class="cabinet__active-info" :class="{ 'cabinet__active-info_disabled': !activeMenu }">
-          <router-view />
+          <router-view :mobile-media-size="mobileMediaSize" :tablet-media-size="tabletMediaSize" />
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 
 type CabMenu = {
@@ -42,6 +42,13 @@ type CabMenu = {
   url: 'orders' | 'settings' | 'help' | '/'
   isActive: Boolean
 }
+
+const cabinetProps = defineProps({
+  mobileMediaSize: Boolean,
+  tabletMediaSize: Boolean
+})
+
+const { mobileMediaSize, tabletMediaSize } = toRefs(cabinetProps)
 
 const router = useRouter()
 const activeMenu = ref('' as CabMenu['url'] | '')

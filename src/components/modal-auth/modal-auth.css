@@ -88,3 +88,38 @@
   border-radius: 30px;
   font-size: 15px;
 }
+
+@media (max-width: 800px) {
+  .modal-window {
+    width: 100%;
+    height: fit-content;
+    border-radius: 0px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    padding: 50px 20px;
+  }
+
+  .auth-warning {
+    bottom: 110px;
+    font-size: 13px;
+    font-weight: 500;
+    color: red;
+  }
+
+  .action {
+    justify-content: center;
+  }
+
+  .action__item {
+    font-size: 14px;
+  }
+
+  .registration,
+  .authorisation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-top: 30px;
+  }
+}

@@ -11,6 +11,17 @@
   cursor: pointer;
 }
 
+.exit-button-burger {
+  width: 50px;
+  height: 50px;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  top: auto;
+  bottom: 70px;
+}
+
+.exit-button-burger:hover,
 .exit-button:hover {
   scale: 1.2;
 }

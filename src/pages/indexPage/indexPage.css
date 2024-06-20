@@ -4,6 +4,7 @@
 .section-five {
   display: flex;
   gap: 60px;
+  z-index: 0;
 }
 
 .section-one {
@@ -38,7 +39,6 @@
 }
 
 .info-block__title {
-  font-size: 46px;
   text-transform: uppercase;
   color: rgb(47, 47, 97);
 }
@@ -46,6 +46,7 @@
 .info-block__text {
   font-size: 20px;
   line-height: 32px;
+  width: 450px;
 }
 
 .section-two {
@@ -71,7 +72,11 @@
   background-color: white;
   width: 50px;
   cursor: pointer;
-  height: 220px;
+  height: 90%;
+}
+
+.carousel__button__img {
+  width: 15px;
 }
 
 .carousel__button:hover {
@@ -113,7 +118,7 @@
   align-items: center;
   position: absolute;
   left: 0;
-  height: 220px;
+  height: 90%;
   box-sizing: border-box;
   padding: 0 30px;
 }
@@ -131,16 +136,15 @@
 .carousel__img {
   max-height: 120px;
   min-height: 30px;
-  /* max-width: 100%; */
   max-width: 220px;
 }
 
 .section-three {
+  width: 100%;
   flex-direction: column;
 }
 
 .section-three__title {
-  font-size: 42px;
   text-transform: uppercase;
 }
 
@@ -156,7 +160,8 @@
 
 .work-steps__card {
   background-color: white;
-  width: 250px;
+  max-width: 250px;
+  width: 20%;
   box-sizing: border-box;
   padding: 27px;
   display: flex;
@@ -170,7 +175,7 @@
 }
 
 .work-steps__title {
-  font-size: 24px;
+  font-size: 20px;
   text-transform: uppercase;
   cursor: default;
 }
@@ -188,6 +193,7 @@
   width: 100%;
   height: 220px;
   overflow: hidden;
+  background-color: white;
 }
 
 .catalog-banner__info {
@@ -217,10 +223,10 @@
 
 .section-four {
   flex-direction: column;
+  width: 100%;
 }
 
 .section-four__title {
-  font-size: 38px;
   text-transform: uppercase;
 }
 
@@ -261,7 +267,7 @@
 .special-offer__info {
   position: absolute;
   left: 30px;
-  top: 75%;
+  top: 70%;
   z-index: 3;
 }
 
@@ -288,16 +294,20 @@
 }
 
 .special-offer__img {
+  background-size: cover;
+  background-position: center;
   width: 100%;
+  height: 100%;
+  background-color: aqua;
   z-index: 1;
 }
 
 .section-five {
+  width: 100%;
   flex-direction: column;
 }
 
 .section-five__title {
-  font-size: 32px;
   text-transform: uppercase;
 }
 
@@ -315,7 +325,7 @@
   height: 100%;
   background-color: white;
   box-sizing: border-box;
-  padding: 30px 30px;
+  padding: 30px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -352,4 +362,282 @@
   position: absolute;
   bottom: 20px;
   z-index: 1;
+}
+
+@media (max-width: 1100px) {
+  .section-one {
+    height: 460px;
+  }
+
+  .info-block {
+    gap: 20px;
+  }
+
+  .info-block__text {
+    font-size: 16px;
+    line-height: 28px;
+  }
+
+  .bg-image {
+    width: 800px;
+  }
+
+  .section-two {
+    height: 160px;
+    gap: 20px;
+  }
+
+  .news-card,
+  .special-offer,
+  .catalog-banner,
+  .work-steps__card_style,
+  .carousel_style {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+  }
+
+  .carousel__button {
+    width: 40px;
+  }
+
+  .carousel__button__img {
+    width: 10px;
+  }
+
+  .carousel__img {
+    max-height: 90px;
+    min-height: 30px;
+    max-width: 190px;
+  }
+
+  .work-steps {
+    flex-direction: column;
+    gap: 20px;
+    background: none;
+    z-index: 0;
+  }
+
+  .work-steps__card {
+    max-width: 80%;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .work-steps__card:nth-child(even) {
+    margin-top: 0;
+  }
+
+  .catalog-banner {
+    height: 170px;
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .catalog-banner__info {
+    padding: 20px 20px;
+  }
+
+  .catalog-banner__title {
+    font-size: 18px;
+  }
+
+  .special-offer {
+    height: 300px;
+  }
+
+  .special-offer__info {
+    left: 30px;
+    top: 60%;
+  }
+
+  .special-offer__title {
+    font-size: 18px;
+  }
+
+  .special-offer__text {
+    margin-top: 10px;
+    font-size: 14px;
+    width: 90%;
+  }
+
+  .news-block {
+    width: 100%;
+    gap: 30px;
+  }
+
+  .news-card {
+    padding: 20px;
+    gap: 12px;
+  }
+
+  .news-card__title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .news-card__text {
+    cursor: default;
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 800px) {
+  .section-one,
+  .section-three,
+  .section-four,
+  .section-five {
+    gap: 30px;
+  }
+
+  .section-one {
+    margin-top: -30px;
+    height: 600px;
+    overflow-x: hidden;
+  }
+
+  .info-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    gap: 20px;
+    height: fit-content;
+    width: 90%;
+    margin-right: 10px;
+  }
+
+  .info-block__text {
+    font-size: 16px;
+    line-height: 28px;
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .bg-image {
+    width: 600px;
+    right: auto;
+    left: auto;
+    margin: 0 auto;
+  }
+
+  .section-two {
+    height: 100px;
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+
+  .news-card,
+  .special-offer,
+  .catalog-banner,
+  .work-steps__card_style,
+  .carousel_style {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+  }
+
+  .carousel__items {
+    gap: 10px;
+    padding: 0 20px;
+  }
+
+  .carousel__button {
+    width: 40px;
+  }
+
+  .carousel__button__img {
+    width: 10px;
+  }
+
+  .carousel__img {
+    max-height: 60px;
+    min-height: 30px;
+    max-width: 140px;
+  }
+
+  .section-three {
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .work-steps__card {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .catalog-banner {
+    height: 170px;
+    width: 100%;
+    margin: 0 auto;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .catalog-banner__info {
+    width: 60%;
+    padding: 20px 20px;
+    z-index: 1;
+    height: 110%;
+    background-color: white;
+  }
+
+  .catalog-banner__img {
+    position: absolute;
+    width: auto;
+    height: 110%;
+    right: -90px;
+    z-index: 0;
+  }
+
+  .catalog-banner__title {
+    min-width: 180px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .section-four {
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+
+  .special-offers {
+    flex-direction: column;
+    justify-content: start;
+  }
+
+  .special-offer {
+    height: 400px;
+  }
+
+  .special-offer::after {
+    bottom: 0;
+    left: 0;
+    height: 400px;
+    background: linear-gradient(#00051800 0%, #000518 100%);
+    z-index: 2;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .section-five {
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+
+  .news-block {
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .news-card {
+    padding: 20px;
+    gap: 12px;
+    height: 190px;
+  }
+
+  .news-card::after {
+    left: 0;
+    bottom: 20px;
+  }
 }

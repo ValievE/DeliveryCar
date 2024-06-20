@@ -1,7 +1,7 @@
 <template>
   <section v-if="parameter === 'partnership'" class="info-section">
     <h1 class="info-section__title">ПАРТНЕРСКАЯ ПРОГРАММА</h1>
-    <h3 class="info-section__subtitle">Получай комиссию до 15% с наших продаж</h3>
+    <p class="info-section__subtitle">Получай комиссию до 15% с наших продаж</p>
     <div class="partnership-block">
       <div v-for="(text, index) in partnership.texts" :key="index" class="partnership-block__item">
         <p class="partnership-title">{{ index + 1 }}</p>
@@ -15,7 +15,7 @@
         class="partnership-question__body"
         @click="activeCard = activeCard === index ? NaN : index"
       >
-        <h4 class="partnership-question">{{ question.question }}</h4>
+        <p class="partnership-question">{{ question.question }}</p>
         <p v-if="activeCard === index" class="partnership-answer">{{ question.answer }}</p>
       </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="vacancies">
       <div v-for="(vacancy, index) in vacancies" :key="index" class="vacancy">
         <div class="vacancy-header">
-          <h3 class="vacancy-title">{{ vacancy.title }}</h3>
+          <p class="vacancy-title">{{ vacancy.title }}</p>
           <p class="vacancy-payday">{{ `З/П от ${vacancy.payday} руб.` }}</p>
         </div>
         <p>
@@ -40,7 +40,7 @@
           }}
         </p>
         <div class="responsibilities">
-          <h5 class="responsibility-title">Обязанности:</h5>
+          <p class="responsibility-title">Обязанности:</p>
           <p
             v-for="(responsibility, responsibilityIndex) in vacancy.responsibilities"
             :key="responsibilityIndex"
@@ -50,7 +50,7 @@
           </p>
         </div>
         <div class="requirements">
-          <h5 class="requirement-title">Требования:</h5>
+          <p class="requirement-title">Требования:</p>
           <p
             v-for="(requirement, requirementIndex) in vacancy.requirements"
             :key="requirementIndex"
@@ -92,7 +92,7 @@ const partnership = {
     {
       question: 'Какая минимальная выплата партнерам?',
       answer:
-        'Минимальная выплата партнерам – 30 000 рублей в зависимости от стоимости автомобиля и уровня партнерства'
+        'Минимальная выплата партнерам – 30.000 рублей в зависимости от стоимости автомобиля и уровня партнерства'
     },
     {
       question: 'Какие существуют уровни партнерства?',

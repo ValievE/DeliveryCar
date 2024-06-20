@@ -150,6 +150,7 @@
 .order__number {
   text-transform: uppercase;
   font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -197,6 +198,7 @@
 .order-title {
   text-transform: uppercase;
   font-size: 20px;
+  font-weight: 700;
 }
 
 .carprice {
@@ -313,4 +315,116 @@
   font-size: 15px;
   text-transform: uppercase;
   font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .order__body {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .order-info {
+    height: 140px;
+    flex-grow: 0;
+    grid-template-columns: 35% 65%;
+    grid-template-rows: 100%;
+    justify-items: center;
+  }
+
+  .order-title {
+    font-size: 16px;
+  }
+
+  .paystatus,
+  .car-brief {
+    font-size: 14px;
+  }
+
+  .carprice {
+    font-size: 17px;
+  }
+
+  .order-info__thumb {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .order-texts {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .delivery-status {
+    height: fit-content;
+    overflow: hidden;
+    flex-direction: row;
+  }
+
+  .indicator {
+    width: 60%;
+    height: 80px;
+  }
+
+  .indicator-img {
+    height: 30px;
+  }
+
+  .indicator-text {
+    font-size: 11px;
+  }
+
+  .delivery-date {
+    width: 40%;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 800px) {
+  .order {
+    justify-content: center;
+  }
+
+  .order__number {
+    font-size: 16px;
+    width: 70%;
+  }
+
+  .order-info {
+    display: flex;
+    flex-grow: 1;
+    height: fit-content;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .order-info__thumb {
+    height: 150px;
+    width: 150px;
+    min-height: 150px;
+    min-width: 150px;
+  }
+
+  .order-texts {
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .delivery-status {
+    height: fit-content;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .indicator {
+    width: 100%;
+  }
+
+  .delivery-date {
+    width: fit-content;
+    text-align: center;
+  }
 }

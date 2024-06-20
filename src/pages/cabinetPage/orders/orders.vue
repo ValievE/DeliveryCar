@@ -48,18 +48,18 @@
       :key="index"
       class="order"
       :style="{
-        'min-height': orderOpened === index ? '250px' : '0px',
-        height: orderOpened === index ? '250px' : 'fit-content'
+        'min-height': orderOpened === index ? openOrder(index) : '100px',
+        height: openOrder(index)
       }"
     >
       <div class="order__header" @click="openCloseOrder(index)">
-        <h4 class="order__number">
+        <p class="order__number">
           {{
             orderOpened === index
               ? `Заказ #${index}`
               : `Заказ #${index}  ||  ${fakeDB[index].brand} ${fakeDB[index].model}`
           }}
-        </h4>
+        </p>
         <img
           class="order__hide-img"
           :class="{ 'order__hide-img_active': orderOpened === index }"
@@ -77,7 +77,7 @@
             @click="modalWindow(true, index)"
           ></div>
           <div class="order-texts">
-            <h5 class="order-title">{{ `${order.brand} ${order.model} ${order.year}` }}</h5>
+            <p class="order-title">{{ `${order.brand} ${order.model} ${order.year}` }}</p>
             <p class="car-brief">
               {{
                 `${order.info.body} / ${!order.mileage ? 'Новый' : `Пробег: ${order.mileage} км`} / Цвет: ${order.info.color} / Двигатель: ${order.info.engine} (${order.info.hp}л.с.)`
@@ -208,11 +208,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import exitButton from '@/components/exit-button/exit-button.vue'
 import fakeDB from '../cabinetPage.json'
 
-const orderOpened = ref(NaN as number)
+const orderProps = defineProps({
+  mobileMediaSize: Boolean,
+  tabletMediaSize: Boolean
+})
+
+const { mobileMediaSize, tabletMediaSize } = toRefs(orderProps)
+
+const orderOpened = ref<number | null>(null)
 const orderGalleryOpened = ref(false as boolean)
 const galleryIndex = ref(NaN as number)
 const photoIndex = ref(1 as number)
@@ -247,6 +254,24 @@ const openFullSize = () => {
   window.open(
     `/img/cabinet/orders/fakeDB/${fakeDB[galleryIndex.value].brand} ${fakeDB[galleryIndex.value].model}/${photoIndex.value}.webp`
   )
+}
+
+const openOrder = (arg: number) => {
+  let windowHeight = 250 as number
+
+  if (mobileMediaSize.value) {
+    windowHeight = 550
+  }
+
+  if (tabletMediaSize.value) {
+    windowHeight = 350
+  }
+
+  if (orderOpened.value === arg) {
+    return `${windowHeight}px`
+  }
+
+  return `fit-content`
 }
 </script>
 

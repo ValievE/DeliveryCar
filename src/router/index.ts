@@ -6,45 +6,42 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('./indexPage/indexPage.vue')
+      component: () => import('@/pages/indexPage/indexPage.vue')
     },
     {
       path: '/info/:section',
       name: 'info',
-      component: () => import('./infoPage/infoPage.vue')
+      component: () => import('@/pages/infoPage/infoPage.vue')
     },
     {
       path: '/delivery',
       name: 'delivery',
-      component: () => import('./deliveryPage/deliveryPage.vue')
+      component: () => import('@/pages/deliveryPage/deliveryPage.vue')
     },
     {
       path: '/catalog',
       name: 'catalog',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('./catalogPage/catalogPage.vue')
+      component: () => import('@/pages/catalogPage/catalogPage.vue')
     },
     {
       path: '/cabinet',
       name: 'cabinet',
-      component: () => import('./cabinetPage/cabinetPage.vue'),
+      component: () => import('@/pages/cabinetPage/cabinetPage.vue'),
       children: [
         {
           name: 'orders',
           path: 'orders',
-          component: () => import('./cabinetPage/orders/orders.vue')
+          component: () => import('@/pages/cabinetPage/orders/orders.vue')
         },
         {
           name: 'settings',
           path: 'settings',
-          component: () => import('./cabinetPage/settings/settings.vue')
+          component: () => import('@/pages/cabinetPage/settings/settings.vue')
         },
         {
           name: 'help',
           path: 'help',
-          component: () => import('./cabinetPage/help/help.vue')
+          component: () => import('@/pages/cabinetPage/help/help.vue')
         }
       ]
     }

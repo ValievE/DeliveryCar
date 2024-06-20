@@ -12,8 +12,7 @@
         с доставкой до дома
       </h1>
       <p class="info-block__text">
-        Покупка нового автомобиля это всегда приятно, <br />
-        а если убрать долгое оформление в автосалоне, <br />
+        Покупка нового автомобиля это всегда приятно, а если убрать долгое оформление в автосалоне,
         бумажную волокиту, то еще лучше!
       </p>
       <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'" />
@@ -21,7 +20,7 @@
   </section>
   <section class="section-two">
     <button class="carousel__button carousel_style" @click="changeCarouselPos('left')">
-      <img src="/img/icons/icon_carousel_left.svg" alt="left" />
+      <img class="carousel__button__img" src="/img/icons/icon_carousel_left.svg" alt="left" />
     </button>
     <div class="carousel__body">
       <div class="carousel__items" :style="{ left: carouselSwap }">
@@ -31,7 +30,7 @@
       </div>
     </div>
     <button class="carousel__button carousel_style" @click="changeCarouselPos('right')">
-      <img src="/img/icons/icon_carousel_right.svg" alt="right" />
+      <img class="carousel__button__img" src="/img/icons/icon_carousel_right.svg" alt="right" />
     </button>
   </section>
   <section class="section-three">
@@ -50,7 +49,11 @@
       <div class="catalog-banner__info">
         <p class="catalog-banner__title">Хотите перейти к выбору автомобилей уже сейчас?</p>
         <router-link to="/catalog" class="catalog-banner__link">
-          <project-button :size="'big'" :color="'orange'" :icon="'arrow'" :text="'Каталог'"
+          <project-button
+            :size="mobileMediaSize ? 'medium' : 'big'"
+            :color="'orange'"
+            :icon="'arrow'"
+            :text="'Каталог'"
         /></router-link>
       </div>
       <img class="catalog-banner__img" src="/img/vw_golf.png" alt="?" />
@@ -64,7 +67,11 @@
           <p class="special-offer__title">{{ specialOffer.title }}</p>
           <p class="special-offer__text">{{ specialOffer.subtitle }}</p>
         </div>
-        <img class="special-offer__img" :src="specialOffer.img" alt="?" />
+        <div
+          class="special-offer__img"
+          :style="{ backgroundImage: `url('${specialOffer.img}')` }"
+        ></div>
+        <!-- <img class="special-offer__img" :src="specialOffer.img" alt="?" /> -->
       </div>
     </div>
   </section>
@@ -89,7 +96,7 @@
 <script setup lang="ts">
 import modalNews from '@/components/modal-news/modal-news.vue'
 import projectButton from '@/components/project-button/project-button.vue'
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 
 type News = {
   title: String
@@ -97,6 +104,12 @@ type News = {
   date: String
   img: String
 }
+
+const indexPageProps = defineProps({
+  mobileMediaSize: Boolean
+})
+
+const { mobileMediaSize } = toRefs(indexPageProps)
 
 const brands = [
   {
@@ -217,7 +230,7 @@ const changeCarouselPos = (arg: string) => {
     document.getElementsByClassName('carousel__body')[0].clientWidth
   const carouselMinWidth = 0
 
-  const carouselStep: number = 280
+  const carouselStep: number = mobileMediaSize.value ? 150 : 280
 
   if (arg === 'right') {
     carouselActualPos.value -= carouselStep

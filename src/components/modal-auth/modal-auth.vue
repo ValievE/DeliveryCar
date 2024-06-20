@@ -149,7 +149,7 @@ const auth = () => {
     modalAuthEmits('updatedName', authInfo.name)
     currentUser.value.email = authorisationInfo.value.email
     currentUser.value.password = authorisationInfo.value.password
-    router.push('cabinet')
+    router.push({ name: 'cabinet' })
     return currentUser
   }
   warningText.value = 'Такого пользователя нет'

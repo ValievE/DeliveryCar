@@ -60,7 +60,7 @@
 import exitButton from '@/components/exit-button/exit-button.vue'
 import projectButton from '@/components/project-button/project-button.vue'
 import { toRefs } from 'vue'
-import catalogPageJSON from '@/router/catalogPage/catalogPage.json'
+import catalogPageJSON from '@/pages/catalogPage/catalogPage.json'
 
 const modalCarProps = defineProps({ isOpened: Boolean, carIndex: { type: Number, default: 0 } })
 const { isOpened, carIndex } = toRefs(modalCarProps)
