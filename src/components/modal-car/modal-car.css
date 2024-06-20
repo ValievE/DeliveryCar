@@ -124,3 +124,69 @@
 .parameter-value {
   font-weight: 600;
 }
+
+@media (max-width: 1100px) {
+  .modal-window {
+    width: 100%;
+    height: fit-content;
+  }
+
+  .section-one {
+    height: 300px;
+  }
+}
+
+@media (max-width: 800px) {
+  .modal-window {
+    padding: 40px 20px;
+  }
+
+  .section-one {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .section-one__img {
+    width: 100%;
+  }
+  .section-one__info-block {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .car-description {
+    width: fit-content;
+    align-items: center;
+    flex-grow: 0;
+    height: fit-content;
+  }
+
+  .car-description__item {
+    width: fit-content;
+  }
+
+  .buy-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .info-block {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+}

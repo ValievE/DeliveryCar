@@ -12,12 +12,20 @@
         :key="index"
         class="selector"
         :class="{ selector_active: activeSelector === index }"
+        :style="{
+          height:
+            activeSelector === index
+              ? (mobileMediaSize ? '300px' : '280px') || (tabletMediaSize ? '200px' : '280px')
+              : mobileMediaSize
+                ? '100px'
+                : '70px'
+        }"
         @click="setSelector(index)"
       >
         <h3 class="selector__name">
           {{ selection.title }}
         </h3>
-        <img class="selector__img" :src="selection.img" alt="?" />
+        <div class="selector__img" :style="{ backgroundImage: `url('${selection.img}')` }"></div>
       </div>
       <img
         v-if="!isNaN(activeSelector)"
@@ -30,14 +38,28 @@
     <div v-if="!isNaN(activeSelector)" class="catalog-window">
       <div class="catalog-window__header">
         <p class="catalog-window__title">{{ fakeDB[activeSelector].title }}</p>
+        <projectButton
+          :text="'Фильтры'"
+          :size="'small'"
+          :color="'orange'"
+          @click="openCloseFilters(true)"
+        />
       </div>
       <div class="catalog-window__body">
         <div
-          v-if="fakeDB[activeSelector].filters.length > 0"
-          class="filters"
-          :style="{ width: isFiltersOpened ? '250px' : '0' }"
+          v-if="
+            mobileMediaSize
+              ? fakeDB[activeSelector].filters.length > 0 && isFiltersModalOpened
+              : fakeDB[activeSelector].filters.length > 0
+          "
+          :class="{ filters: !mobileMediaSize, 'filters-burger': mobileMediaSize }"
+          :style="{ width: isFiltersOpened ? (mobileMediaSize ? '100%' : '250px') : '0' }"
         >
-          <div class="filters-hide-btn" :style="{ width: isFiltersOpened ? '45px' : '35px' }">
+          <div
+            v-if="!mobileMediaSize && !tabletMediaSize"
+            class="filters-hide-btn"
+            :style="{ width: isFiltersOpened ? '45px' : '35px' }"
+          >
             <button class="filters-hide-btn-body" @click="isFiltersOpened = !isFiltersOpened">
               <img
                 class="filters-hide-btn-img"
@@ -92,7 +114,7 @@
               :size="'medium'"
               :color="'orange'"
               :text="'Применить'"
-              @click="acceptFilters"
+              @click="acceptFilters, openCloseFilters(false)"
             />
           </div>
         </div>
@@ -127,9 +149,16 @@
 
 <script setup lang="ts">
 import projectButton from '@/components/project-button/project-button.vue'
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import modalCar from '@/components/modal-car/modal-car.vue'
 import catalogPageJSON from './catalogPage.json'
+
+const cabinetProps = defineProps({
+  mobileMediaSize: Boolean,
+  tabletMediaSize: Boolean
+})
+
+const { mobileMediaSize, tabletMediaSize } = toRefs(cabinetProps)
 
 type NewCar = {
   carId: Number
@@ -158,6 +187,7 @@ const fakeConfigCarsDB: Array<NewCar> = []
 const actualCarList = ref([] as Array<NewCar>)
 const bufferedCarList = ref([] as Array<NewCar>)
 const isModalOpened = ref(false as boolean)
+const isFiltersModalOpened = ref<Boolean>(false)
 
 const setSelector = (index: number) => {
   activeSelector.value = index
@@ -260,6 +290,16 @@ const acceptFilters = () => {
       }
     }
   })
+}
+
+const openCloseFilters = (arg: boolean) => {
+  if (arg) {
+    isFiltersModalOpened.value = true
+    document.body.style.overflowY = 'hidden'
+    return
+  }
+  isFiltersModalOpened.value = false
+  document.body.style.overflowY = 'visible'
 }
 
 const openCarModal = (float: boolean, index?: number) => {

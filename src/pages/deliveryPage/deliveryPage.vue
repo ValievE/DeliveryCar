@@ -6,7 +6,7 @@
       <div class="delivery-stages">
         <div v-for="(stage, index) in deliveryStages" :key="index" class="delivery-stage">
           <span class="delivery-stage-number">{{ index + 1 }}</span>
-          <h3 class="delivery-stage-title">{{ stage.title }}</h3>
+          <p class="delivery-stage-title">{{ stage.title }}</p>
           <p class="delivery-stage-text">{{ stage.text }}</p>
         </div>
       </div>

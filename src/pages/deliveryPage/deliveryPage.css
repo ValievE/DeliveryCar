@@ -17,7 +17,6 @@
 }
 
 .delivery-title {
-  font-size: 34px;
   text-transform: uppercase;
 }
 
@@ -64,6 +63,7 @@
 
 .delivery-stage-title {
   text-transform: uppercase;
+  font-size: 28px;
   grid-row: 1;
   grid-column: 2;
   font-weight: 600;
@@ -73,4 +73,64 @@
   line-height: 25px;
   grid-row: 2;
   grid-column: 2;
+}
+
+@media (max-width: 1100px) {
+  .delivery-bg {
+    position: absolute;
+    z-index: -1;
+    width: 80%;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: auto;
+    margin: 0 auto;
+  }
+
+  .delivery-stages {
+    margin: 0 auto;
+    margin-top: 150px;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    background-color: white;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 800px) {
+  .delivery {
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+
+  .delivery-bg {
+    top: 2%;
+  }
+
+  .delivery-stages {
+    margin-top: 80px;
+    width: 100%;
+    gap: 30px;
+  }
+
+  .delivery-stage {
+    grid-template-columns: 15% 80%;
+    gap: 20px 5%;
+    grid-template-rows: 30px 1fr;
+    align-items: baseline;
+  }
+
+  .delivery-stage-number {
+    font-size: 32px;
+    height: 60px;
+    width: 60px;
+  }
+
+  .delivery-stage-title {
+    font-size: 24px;
+    line-height: 22px;
+    align-self: self-start;
+  }
 }

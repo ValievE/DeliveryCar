@@ -111,7 +111,7 @@ const carParameters: NewCarParams = {
   info: {
     year: 'Год',
     hp: 'Мощность',
-    kpp: 'Коробка передач',
+    kpp: 'КПП',
     du: 'Привод',
     fuel: 'Двигатель'
   } as CarParamsInfo
