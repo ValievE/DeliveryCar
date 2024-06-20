@@ -16,9 +16,9 @@
           height:
             activeSelector === index
               ? (mobileMediaSize ? '300px' : '280px') || (tabletMediaSize ? '200px' : '280px')
-              : mobileMediaSize
+              : mobileMediaSize || tabletMediaSize
                 ? '100px'
-                : '70px'
+                : '280px'
         }"
         @click="setSelector(index)"
       >
