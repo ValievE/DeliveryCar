@@ -15,9 +15,9 @@
         Покупка нового автомобиля это всегда приятно, а если убрать долгое оформление в автосалоне,
         бумажную волокиту, то еще лучше!
       </p>
-      <router-link class="info-block__button" :to="{ name: 'delivery' }">
-        <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'"
-      /></router-link>
+      <router-link class="info-block__button" :to="'/'">
+        <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'" />
+      </router-link>
     </div>
   </section>
   <section class="section-two">
@@ -73,7 +73,6 @@
           class="special-offer__img"
           :style="{ backgroundImage: `url('${specialOffer.img}')` }"
         ></div>
-        <!-- <img class="special-offer__img" :src="specialOffer.img" alt="?" /> -->
       </div>
     </div>
   </section>
@@ -258,10 +257,10 @@ const changeCarouselPos = (arg: string) => {
     ) {
       carouselActualPos.value = carouselMinWidth
     }
-  }
 
-  carouselSwap.value = `${carouselActualPos.value}px`
-  return carouselSwap.value
+    carouselSwap.value = `${carouselActualPos.value}px`
+    return carouselSwap.value
+  }
 }
 </script>
 

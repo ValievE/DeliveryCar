@@ -8,7 +8,7 @@
     <h1 class="catalog-title">Каталог</h1>
     <div class="selectors">
       <div
-        v-for="(selection, index) in fakeDB"
+        v-for="(selection, index) in sectionInfo"
         :key="index"
         class="selector"
         :class="{ selector_active: activeSelector === index }"
@@ -37,9 +37,9 @@
     </div>
     <div v-if="!isNaN(activeSelector)" class="catalog-window">
       <div class="catalog-window__header">
-        <p class="catalog-window__title">{{ fakeDB[activeSelector].title }}</p>
+        <p class="catalog-window__title">{{ sectionInfo[activeSelector].title }}</p>
         <projectButton
-          v-if="mobileMediaSize && fakeDB[activeSelector].filters.length > 0"
+          v-if="mobileMediaSize && sectionInfo[activeSelector].filters.length > 0"
           :text="'Фильтры'"
           :size="'small'"
           :color="'orange'"
@@ -50,8 +50,8 @@
         <div
           v-if="
             mobileMediaSize
-              ? fakeDB[activeSelector].filters.length > 0 && isFiltersModalOpened
-              : fakeDB[activeSelector].filters.length > 0
+              ? sectionInfo[activeSelector].filters.length > 0 && isFiltersModalOpened
+              : sectionInfo[activeSelector].filters.length > 0
           "
           :class="{ filters: !mobileMediaSize, 'filters-burger': mobileMediaSize }"
           :style="{ width: isFiltersOpened ? (mobileMediaSize ? '100%' : '250px') : '0' }"
@@ -87,7 +87,7 @@
                 </select>
               </div>
               <div
-                v-for="(filter, index) in fakeDB[activeSelector].filters"
+                v-for="(filter, index) in sectionInfo[activeSelector].filters"
                 :key="index"
                 class="filters__list-item"
               >
@@ -117,28 +117,38 @@
               :text="'Применить'"
               @click="acceptFilters, openCloseFilters(false)"
             />
+            <projectButton :size="'small'" :color="'gray'" :text="'Сбросить фильтры'" />
           </div>
         </div>
         <div class="catalog-list">
-          <div v-if="!actualCarList.length" class="catalog-warning">
-            <img
-              class="catalog-warning__img"
-              src="/img/empty_garage.svg"
-              alt="Тут пока что пусто"
+          <div v-if="!actualCarList?.length" class="catalog-warning">
+            <unavailableIcon
+              v-if="!sectionInfo[activeSelector].isActive"
+              :text="'Раздел разрабатывается'"
             />
+            <loadingInfoIcon v-if="sectionInfo[activeSelector].isActive" />
           </div>
           <div v-for="(carItem, index) in actualCarList" :key="index" class="catalog-item">
-            <div class="catalog-item__body">
-              <img class="catalog-item__img" :src="carItem.photos[0]" alt="?" />
+            <div
+              v-if="!(carItem.brand && carItem.model && carItem.price)"
+              class="catalog-item__body_loading loader"
+            ></div>
+            <div v-if="carItem.brand && carItem.model && carItem.price" class="catalog-item__body">
+              <div v-if="!carItem.avatar" class="catalog-item__img_loading loader"></div>
+              <img
+                v-if="carItem.avatar"
+                class="catalog-item__img"
+                :src="`${carItem.avatar}`"
+                alt=""
+              />
               <span class="catalog-item__name">{{
-                `${String(carItem.brand)} ${String(carItem.model)} ${String(carItem.info.year)}`
+                `${String(carItem.brand)} ${String(carItem.model)} ${String(carItem.year)}`
               }}</span>
-              <span class="catalog-item__price">{{ `${carItem.price} Р` }}</span>
+              <span class="catalog-item__price">{{
+                `${changePrice(carItem.price as number)} Р`
+              }}</span>
             </div>
-            <button
-              class="catalog-item__button"
-              @click="openCarModal(true, carItem.carId as number)"
-            >
+            <button class="catalog-item__button" @click="openCarModal(true, carItem.id as number)">
               Узнать подробности
             </button>
           </div>
@@ -150,9 +160,27 @@
 
 <script setup lang="ts">
 import projectButton from '@/components/project-button/project-button.vue'
-import { ref, toRefs } from 'vue'
+import unavailableIcon from '@/components/unavailable-icon/unavailable-icon.vue'
+import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
+import { ref, toRefs, watch } from 'vue'
 import modalCar from '@/components/modal-car/modal-car.vue'
-import catalogPageJSON from './catalogPage.json'
+import { supabase } from '@/lib/supabaseClient'
+
+type CarInfo = {
+  avatar?: String
+  id: Number
+  brand: String
+  model: String
+  hp: Number
+  du: String
+  fuel: String
+  body: String
+  in_stock?: Number
+  kpp?: String
+  price: Number
+  year: Number
+  mileage?: Number
+}
 
 const cabinetProps = defineProps({
   mobileMediaSize: Boolean,
@@ -161,76 +189,40 @@ const cabinetProps = defineProps({
 
 const { mobileMediaSize, tabletMediaSize } = toRefs(cabinetProps)
 
-type NewCar = {
-  carId: Number
-  brand: String
-  model: String
-  body: String
-  photos: Array<string>
-  inStock: Number
-  price: Number
-  info: {
-    year: Number
-    hp: Number
-    kpp: String
-    du: String
-    fuel: String
-  }
-}
-
-const activeSelector = ref(NaN as number)
-const isFiltersOpened = ref(true as boolean)
+const loadedCarList = ref<Array<CarInfo> | undefined>([])
+const actualCarList = ref<Array<CarInfo>>([])
+const bufferedCarList = ref<Array<CarInfo>>([])
+const activeSelector = ref<number>(NaN)
+const isFiltersOpened = ref<boolean>(true)
 const sortEvent = ref('default' as 'default' | 'up' | 'down')
 const pickedCar = ref(0 as number)
-const fakeNewCarsDB: Array<NewCar> = catalogPageJSON
-const fakeUsedCarsDB: Array<NewCar> = []
-const fakeConfigCarsDB: Array<NewCar> = []
-const actualCarList = ref([] as Array<NewCar>)
-const bufferedCarList = ref([] as Array<NewCar>)
-const isModalOpened = ref(false as boolean)
-const isFiltersModalOpened = ref<Boolean>(false)
+const fakeConfigCarsDB: Array<CarInfo> = []
+const isModalOpened = ref<boolean>(false)
+const isFiltersModalOpened = ref<boolean>(false)
 
-const setSelector = (index: number) => {
-  activeSelector.value = index
-  actualCarList.value = []
-  if (index === 0) {
-    fakeNewCarsDB.forEach((item) => {
-      actualCarList.value.push(item)
-      bufferedCarList.value.push(item)
-    })
-  }
-
-  if (index === 1) {
-    fakeUsedCarsDB.forEach((item) => {
-      actualCarList.value.push(item)
-    })
-  }
-
-  if (index === 2) {
-    fakeConfigCarsDB.forEach((item) => {
-      actualCarList.value.push(item)
-    })
-  }
-}
-
-const fakeDB = [
+const sectionInfo = ref([
   {
     title: 'Новые автомобили',
     img: '/img/catalog/selectors/new_image.png',
+    url: 'new_cars',
+    isActive: true,
     filters: [
       {
         name: 'Производитель',
-        values: ['BMW', 'Geely', 'Haval', 'Mercedes-Benz', 'Porsche', 'Toyota', 'Volkswagen'],
+        key: 'brand',
+        values: [] as string[],
         input: '' as string
       },
       {
         name: 'Год производства',
-        values: [2022, 2023, 2024],
-        input: '' as number | ''
+        key: 'year',
+        values: [] as string[],
+        input: '' as string
       },
       {
         name: 'Кузов',
-        values: ['Хетчбек', 'Седан', 'Купе', 'Универсал', 'Внедорожник', 'Минивэн'],
+        key: 'body',
+        values: [] as string[],
         input: '' as string
       }
     ]
@@ -238,36 +230,85 @@ const fakeDB = [
   {
     title: 'Автомобили с пробегом',
     img: '/img/catalog/selectors/used_image.png',
+    url: 'used_cars',
+    isActive: true,
     filters: []
   },
   {
     title: 'Конфигуратор',
     img: '/img/catalog/selectors/configure_image.png',
+    url: '',
+    isActive: false,
     filters: []
   }
-]
+])
 
 const carSort = ref({
   brand: '' as string,
-  year: '' as number | '',
+  year: '' as string,
   body: '' as string
 })
 
+function createFilters(arg: 'new_cars' | 'used_cars') {
+  sectionInfo.value.forEach((sectionInfoValue) => {
+    if (sectionInfoValue.url === arg) {
+      sectionInfoValue.filters.forEach((filter) => {
+        loadedCarList.value?.forEach((carItem) => {
+          const carItemKeys = Object.keys(carItem) as string[]
+          type FilterKeys = keyof CarInfo
+          if (carItemKeys.includes(filter.key)) {
+            if (!filter.values.includes(carItem[filter.key as FilterKeys] as string)) {
+              filter.values.push(carItem[filter.key as FilterKeys] as string)
+            }
+          }
+        })
+      })
+    }
+  })
+}
+
+const getData = async (arg: 'new_cars' | 'used_cars') => {
+  const { data: newCars, error } = await supabase.from(arg).select('*')
+  console.error('error', error)
+  loadedCarList.value = newCars?.map((x) => x)
+  if (loadedCarList.value) {
+    createFilters(arg)
+  }
+}
+
+const setSelector = async (index: number) => {
+  activeSelector.value = index
+  actualCarList.value = []
+  if (index === 0) {
+    await getData('new_cars')
+  }
+
+  if (index === 1) {
+    await getData('used_cars')
+  }
+
+  if (index === 2) {
+    fakeConfigCarsDB.forEach((item) => {
+      actualCarList.value?.push(item)
+    })
+  }
+}
+
 const sortByPrice = () => {
   if (sortEvent.value === 'up') {
-    actualCarList.value.sort(
+    actualCarList.value?.sort(
       (firstItem, secondItem) => (firstItem.price as number) - (secondItem.price as number)
     )
   }
 
   if (sortEvent.value === 'down') {
-    actualCarList.value.sort(
+    actualCarList.value?.sort(
       (firstItem, secondItem) => (secondItem.price as number) - (firstItem.price as number)
     )
   }
 
   if (sortEvent.value === 'default') {
-    actualCarList.value = [] as Array<NewCar>
+    actualCarList.value = [] as Array<CarInfo>
     bufferedCarList.value.forEach((item) => {
       actualCarList.value.push(item)
     })
@@ -275,22 +316,23 @@ const sortByPrice = () => {
 }
 
 const acceptFilters = () => {
-  carSort.value.brand = fakeDB[0].filters[0].input as string
-  carSort.value.year = fakeDB[0].filters[1].input as number
-  carSort.value.body = fakeDB[0].filters[2].input as string
-  actualCarList.value = [] as Array<NewCar>
-  bufferedCarList.value = [] as Array<NewCar>
+  carSort.value.brand = sectionInfo.value[0].filters[0].input as string
+  carSort.value.year = sectionInfo.value[0].filters[1].input as string
+  carSort.value.body = sectionInfo.value[0].filters[2].input as string
+  actualCarList.value = [] as Array<CarInfo>
+  bufferedCarList.value = [] as Array<CarInfo>
 
-  fakeNewCarsDB.forEach((item) => {
+  loadedCarList.value?.forEach((item) => {
     if (item.brand === carSort.value.brand || !carSort.value.brand) {
-      if (item.info.year === carSort.value.year || !carSort.value.year) {
+      if (Number(item.year) === Number(carSort.value.year) || carSort.value.year === '') {
         if (item.body === carSort.value.body || !carSort.value.body) {
-          bufferedCarList.value.push(item)
           actualCarList.value.push(item)
+          bufferedCarList.value.push(item)
         }
       }
     }
   })
+  sortByPrice()
 }
 
 const openCloseFilters = (arg: boolean) => {
@@ -303,7 +345,7 @@ const openCloseFilters = (arg: boolean) => {
   document.body.style.overflowY = 'visible'
 }
 
-const openCarModal = (float: boolean, index?: number) => {
+const openCarModal = async (float: boolean, index?: number) => {
   if (float && index !== undefined) {
     isModalOpened.value = true
     document.body.style.overflowY = 'hidden'
@@ -314,6 +356,38 @@ const openCarModal = (float: boolean, index?: number) => {
   document.body.style.overflowY = 'visible'
   return isModalOpened
 }
+
+const changePrice = (arg: number) => {
+  const strigifiedPrice = String(arg).split('')
+  let priceLength = strigifiedPrice.length
+  while (priceLength >= 3) {
+    priceLength -= 3
+    strigifiedPrice.splice(priceLength, 0, '.')
+  }
+  return strigifiedPrice.join('')
+}
+
+watch(
+  () => loadedCarList.value,
+  () => {
+    if (loadedCarList.value) {
+      actualCarList.value = loadedCarList.value.map((x) => x)
+
+      actualCarList.value.forEach(async (item) => {
+        const fileName = await supabase.storage.from('cars').list(`new_cars/${item.id}/`, {
+          limit: 10,
+          offset: 0
+        })
+        const imageUrl = await supabase.storage
+          .from('cars')
+          .getPublicUrl(`new_cars/${item.id}/${fileName.data![0].name as string}`)
+        item.avatar = imageUrl.data.publicUrl
+      })
+
+      bufferedCarList.value = actualCarList.value.map((item) => item)
+    }
+  }
+)
 </script>
 
 <style src="./catalogPage.css" scoped />

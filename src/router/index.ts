@@ -5,43 +5,49 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/pages/indexPage/indexPage.vue')
-    },
-    {
-      path: '/info/:section',
-      name: 'info',
-      component: () => import('@/pages/infoPage/infoPage.vue')
-    },
-    {
-      path: '/delivery',
-      name: 'delivery',
-      component: () => import('@/pages/deliveryPage/deliveryPage.vue')
-    },
-    {
-      path: '/catalog',
-      name: 'catalog',
-      component: () => import('@/pages/catalogPage/catalogPage.vue')
-    },
-    {
-      path: '/cabinet',
-      name: 'cabinet',
-      component: () => import('@/pages/cabinetPage/cabinetPage.vue'),
+      component: () => import('@/views/HomeView.vue'),
       children: [
         {
-          name: 'orders',
-          path: 'orders',
-          component: () => import('@/pages/cabinetPage/orders/orders.vue')
+          path: '/',
+          name: 'home',
+          component: () => import('@/pages/indexPage/indexPage.vue')
         },
         {
-          name: 'settings',
-          path: 'settings',
-          component: () => import('@/pages/cabinetPage/settings/settings.vue')
+          path: '/info/:section',
+          name: 'info',
+          component: () => import('@/pages/infoPage/infoPage.vue')
         },
         {
-          name: 'help',
-          path: 'help',
-          component: () => import('@/pages/cabinetPage/help/help.vue')
+          path: '/delivery',
+          name: 'delivery',
+          component: () => import('@/pages/deliveryPage/deliveryPage.vue')
+        },
+        {
+          path: '/catalog',
+          name: 'catalog',
+          component: () => import('@/pages/catalogPage/catalogPage.vue')
+        },
+        {
+          path: '/cabinet',
+          name: 'cabinet',
+          component: () => import('@/views/CabinetView.vue'),
+          children: [
+            {
+              name: 'orders',
+              path: 'orders',
+              component: () => import('@/pages/cabinetPage/orders/orders.vue')
+            },
+            {
+              name: 'settings',
+              path: 'settings',
+              component: () => import('@/pages/cabinetPage/settings/settings.vue')
+            },
+            {
+              name: 'help',
+              path: 'help',
+              component: () => import('@/pages/cabinetPage/help/help.vue')
+            }
+          ]
         }
       ]
     }

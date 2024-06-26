@@ -113,4 +113,4 @@ watch(
 )
 </script>
 
-<style src="./cabinetPage.css" />
+<style src="./CabinetView.css" scoped />

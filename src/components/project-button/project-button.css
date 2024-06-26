@@ -26,11 +26,11 @@
 }
 
 .project-button_orange {
-  background-color: rgb(255, 153, 0);
+  background-color: #ff9900;
 }
 
 .project-button_orange:hover:enabled {
-  background-color: rgb(218, 131, 0);
+  background-color: #d45900;
 }
 
 .project-button_small {
