@@ -1,12 +1,13 @@
 <template>
   <div v-if="isOpened" class="modal-zone">
-    <!-- <div v-if="isOpened" class="modal-zone">
-      <div class="modal-window">
-        <exitButton @click="modalAuthEmits('closeAuthModal')" />
-      </div>
-    </div> -->
     <div class="modal-window">
-      <exitButton @click="modalAuthEmits('closeAuthModal')" />
+      <modalUniversal
+        v-if="successRegistration"
+        :text="'Регистрация прошла успешно!'"
+        :type="'success'"
+        :timer="'3s'"
+      />
+      <exitButton @click="modalAuthEmits('closeAuthModal'), (actualAction = 'login')" />
       <div v-if="successSubmit" class="loading-icon"><loadingInfoIcon /></div>
       <div class="action">
         <p
@@ -27,22 +28,34 @@
       </div>
       <div v-if="actualAction === 'login'" class="authorisation">
         <form id="authorisation" class="authorisation__inputs" @submit.prevent="authUser">
-          <label class="authorisation__label" for="auth-email">E-mail</label>
-          <input
-            id="auth-email"
-            v-model="authorisationInfo.email"
-            class="authorisation__input"
-            type="text"
-            placeholder="Введите ваш e-mail"
-          />
-          <label class="authorisation__label" for="auth-pass">Пароль</label>
-          <input
-            id="auth-pass"
-            v-model="authorisationInfo.password"
-            class="authorisation__input"
-            type="password"
-            placeholder="Введите ваш пароль"
-          />
+          <div class="authorisation-item">
+            <label class="authorisation__label" for="auth-email">E-mail</label>
+            <input
+              id="auth-email"
+              v-model="authorisationInfo.email"
+              class="authorisation__input"
+              type="text"
+              placeholder="Введите ваш e-mail"
+            />
+          </div>
+          <div class="authorisation-item">
+            <label class="authorisation__label" for="auth-pass">Пароль</label>
+            <img
+              v-if="authorisationInfo.password"
+              class="show-password-btn"
+              src="/img/icons/icon_eye.svg"
+              alt=""
+              @mouseup="authorisationInfo.type = 'password'"
+              @mousedown="authorisationInfo.type = 'text'"
+            />
+            <input
+              id="auth-pass"
+              v-model="authorisationInfo.password"
+              class="authorisation__input"
+              :type="authorisationInfo.type"
+              placeholder="Введите ваш пароль"
+            />
+          </div>
         </form>
         <span v-if="warningText" class="auth-warning">{{ warningText }}</span>
         <projectButton
@@ -60,10 +73,30 @@
             v-for="(registrationItem, index) in registrationItems"
             :key="index"
             class="registation-item"
+            :class="{
+              'registation-item_denied': registrationItem.input === 'email' && regErrors.email
+            }"
           >
             <label class="registration__label" :for="registrationItem.id">{{
               registrationItem.label
             }}</label>
+            <img
+              v-if="
+                registrationItem.input === 'password' &&
+                registrationInfo[registrationItem.input as RegisterKeys]
+              "
+              class="show-password-btn"
+              src="/img/icons/icon_eye.svg"
+              alt=""
+              @mouseup="registrationItem.type = 'password'"
+              @mousedown="registrationItem.type = 'text'"
+            />
+            <p
+              v-if="registrationItem.input === 'password' && regErrors.password"
+              class="password-hint"
+            >
+              Пароль должен содержать не менее 6 символов
+            </p>
             <input
               :id="registrationItem.id"
               v-model="registrationInfo[registrationItem.input as RegisterKeys]"
@@ -79,7 +112,7 @@
           :size="'medium'"
           :text="'Регистрация'"
           :color="'gray'"
-          :button-disabled="isInputsEmpty"
+          :button-disabled="isInputsEmpty || regErrors.password"
         />
       </div>
     </div>
@@ -87,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import modalUniversal from '@/components/modal-universal/modal-universal.vue'
 import projectButton from '@/components/project-button/project-button.vue'
 import exitButton from '@/components/exit-button/exit-button.vue'
 import { ref, toRefs, computed, watch } from 'vue'
@@ -116,9 +150,16 @@ const modalAuthEmits = defineEmits(['closeAuthModal'])
 const { isOpened } = toRefs(modalAuthProps)
 const actualAction = ref<'login' | 'register'>('login')
 const successSubmit = ref<boolean>(false)
+const successRegistration = ref<boolean>(false)
 const authorisationInfo = ref({
   email: '' as string,
-  password: '' as string
+  password: '' as string,
+  type: 'password' as string
+})
+
+const regErrors = ref({
+  password: false,
+  email: false
 })
 
 const sessionInfo = ref<Session | null>()
@@ -157,7 +198,7 @@ const registrationInfo = ref({
 
 const warningText = ref<string>('')
 
-const registrationItems = [
+const registrationItems = ref([
   {
     id: 'reg-email',
     label: 'Email',
@@ -186,7 +227,7 @@ const registrationItems = [
     input: 'password',
     type: 'password'
   }
-]
+])
 
 const auth = async () => {
   try {
@@ -200,7 +241,8 @@ const auth = async () => {
       router.push({ name: 'cabinet' })
       authorisationInfo.value = {
         email: '',
-        password: ''
+        password: '',
+        type: 'password'
       }
     }
 
@@ -219,6 +261,11 @@ const authUser = () => {
   auth()
 }
 
+const upperCase = (arg: string) => {
+  const newString = arg[0].toUpperCase() + arg.slice(1).toLocaleLowerCase()
+  return newString
+}
+
 const register = async () => {
   try {
     const { error } = await supabase.auth.signUp({
@@ -226,20 +273,29 @@ const register = async () => {
       password: registrationInfo.value.password as string,
       options: {
         data: {
-          first_name: registrationInfo.value.name,
-          secnd_name: registrationInfo.value.surname
+          first_name: upperCase(registrationInfo.value.name as string),
+          secnd_name: upperCase(registrationInfo.value.surname as string)
         }
       }
     })
-    console.error(error)
+
+    if (error?.message === 'Unable to validate email address: invalid format') {
+      regErrors.value.email = true
+    }
     if (!error) {
-      alert('Успешно')
-      registrationInfo.value = {
-        name: '',
-        surname: '',
-        email: '',
-        password: ''
-      }
+      successRegistration.value = true
+      setTimeout(() => {
+        modalAuthEmits('closeAuthModal')
+        router.push({ name: 'cabinet' })
+        regErrors.value.email = false
+        registrationInfo.value = {
+          name: '',
+          surname: '',
+          email: '',
+          password: ''
+        }
+        successRegistration.value = false
+      }, 3000)
     }
   } catch (error) {
     console.error(error)
@@ -259,8 +315,39 @@ watch(
   () => {
     authorisationInfo.value = {
       email: '',
-      password: ''
+      password: '',
+      type: 'password'
     }
+  }
+)
+
+watch(
+  () => registrationInfo.value.password,
+  (newValue) => {
+    if (newValue.length < 6 && newValue.length !== 0) {
+      regErrors.value.password = true
+      return regErrors.value.password
+    }
+    regErrors.value.password = false
+    return regErrors.value.password
+  }
+)
+
+watch(
+  () => registrationInfo.value.name,
+  () => {
+    const reg = /[^a-zA-Zа-яА-ЯёЁ]/
+    registrationInfo.value.name = registrationInfo.value.name.replace(reg, '')
+    return registrationInfo.value.name
+  }
+)
+
+watch(
+  () => registrationInfo.value.surname,
+  () => {
+    const reg = /[^a-zA-Zа-яА-ЯёЁ]/
+    registrationInfo.value.surname = registrationInfo.value.surname.replace(reg, '')
+    return registrationInfo.value.surname
   }
 )
 
