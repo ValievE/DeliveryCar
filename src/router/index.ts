@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { supabase } from '@/lib/supabaseClient'
+
+let userSession
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +34,7 @@ const router = createRouter({
           path: '/cabinet',
           name: 'cabinet',
           component: () => import('@/views/CabinetView.vue'),
+          meta: { requiresAuth: true },
           children: [
             {
               name: 'orders',
@@ -52,6 +56,16 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth) {
+    userSession = await supabase.auth.getSession()
+    if (userSession.data.session === null) {
+      next({ name: 'home' })
+    }
+  }
+  next()
 })
 
 export default router

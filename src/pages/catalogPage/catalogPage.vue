@@ -3,6 +3,7 @@
     <modalCar
       :is-opened="isModalOpened"
       :car-index="pickedCar"
+      :car-item="pickedNewCar"
       @close-car-modal="openCarModal(false)"
     />
     <h1 class="catalog-title">Каталог</h1>
@@ -49,7 +50,7 @@
       <div class="catalog-window__body">
         <div
           v-if="
-            mobileMediaSize
+            !loadedCarList?.length || mobileMediaSize
               ? sectionInfo[activeSelector].filters.length > 0 && isFiltersModalOpened
               : sectionInfo[activeSelector].filters.length > 0
           "
@@ -111,44 +112,68 @@
                 </select>
               </div>
             </div>
-            <projectButton
-              :size="'medium'"
-              :color="'orange'"
-              :text="'Применить'"
-              @click="acceptFilters, openCloseFilters(false)"
-            />
-            <projectButton :size="'small'" :color="'gray'" :text="'Сбросить фильтры'" />
+            <div class="filter-buttons">
+              <projectButton
+                :size="'medium'"
+                :color="'orange'"
+                :text="'Применить'"
+                @click="acceptFilters, openCloseFilters(false)"
+              />
+              <projectButton
+                :size="'small'"
+                :color="'gray'"
+                :text="'Сбросить фильтры'"
+                @click="clearFilters, openCloseFilters(false)"
+              />
+            </div>
           </div>
         </div>
-        <div class="catalog-list">
+        <div
+          class="catalog-list"
+          :style="{
+            gridTemplateColumns: isFiltersOpened ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)'
+          }"
+        >
           <div v-if="!actualCarList?.length" class="catalog-warning">
             <unavailableIcon
               v-if="!sectionInfo[activeSelector].isActive"
               :text="'Раздел разрабатывается'"
             />
-            <loadingInfoIcon v-if="sectionInfo[activeSelector].isActive" />
+            <loadingInfoIcon
+              v-if="sectionInfo[activeSelector].isActive && !loadedCarList?.length"
+            />
+            <undefinedCar
+              v-if="
+                sectionInfo[activeSelector].isActive &&
+                loadedCarList?.length &&
+                !actualCarList.length
+              "
+              :text="'К сожалению, автомобиля с такими параметрами у нас нет'"
+            />
           </div>
           <div v-for="(carItem, index) in actualCarList" :key="index" class="catalog-item">
             <div
               v-if="!(carItem.brand && carItem.model && carItem.price)"
               class="catalog-item__body_loading loader"
             ></div>
+            <div class="catalog-item__brand">
+              <span class="catalog-item__brand-text">{{ carItem.brand }}</span>
+            </div>
             <div v-if="carItem.brand && carItem.model && carItem.price" class="catalog-item__body">
               <div v-if="!carItem.avatar" class="catalog-item__img_loading loader"></div>
-              <img
+              <div
                 v-if="carItem.avatar"
                 class="catalog-item__img"
-                :src="`${carItem.avatar}`"
-                alt=""
-              />
-              <span class="catalog-item__name">{{
-                `${String(carItem.brand)} ${String(carItem.model)} ${String(carItem.year)}`
-              }}</span>
+                :style="{
+                  backgroundImage: `url('${carItem.avatar}')`
+                }"
+              ></div>
+              <span class="catalog-item__name">{{ `${carItem.model} ${carItem.year}` }}</span>
               <span class="catalog-item__price">{{
-                `${changePrice(carItem.price as number)} Р`
+                `${changePrice(carItem.price as number)} ₽`
               }}</span>
             </div>
-            <button class="catalog-item__button" @click="openCarModal(true, carItem.id as number)">
+            <button class="catalog-item__button" @click="openCarModal(true, carItem)">
               Узнать подробности
             </button>
           </div>
@@ -162,6 +187,7 @@
 import projectButton from '@/components/project-button/project-button.vue'
 import unavailableIcon from '@/components/unavailable-icon/unavailable-icon.vue'
 import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
+import undefinedCar from '@/components/undefined-car/undefined-car.vue'
 import { ref, toRefs, watch } from 'vue'
 import modalCar from '@/components/modal-car/modal-car.vue'
 import { supabase } from '@/lib/supabaseClient'
@@ -182,6 +208,12 @@ type CarInfo = {
   mileage?: Number
 }
 
+type CarSort = {
+  brand: String
+  year: String
+  body: String
+}
+
 const cabinetProps = defineProps({
   mobileMediaSize: Boolean,
   tabletMediaSize: Boolean
@@ -196,6 +228,17 @@ const activeSelector = ref<number>(NaN)
 const isFiltersOpened = ref<boolean>(true)
 const sortEvent = ref('default' as 'default' | 'up' | 'down')
 const pickedCar = ref(0 as number)
+const pickedNewCar = ref<CarInfo>({
+  body: '',
+  brand: '',
+  du: '',
+  hp: 0,
+  fuel: '',
+  id: 0,
+  model: '',
+  price: 0,
+  year: 0
+})
 const fakeConfigCarsDB: Array<CarInfo> = []
 const isModalOpened = ref<boolean>(false)
 const isFiltersModalOpened = ref<boolean>(false)
@@ -243,10 +286,10 @@ const sectionInfo = ref([
   }
 ])
 
-const carSort = ref({
-  brand: '' as string,
-  year: '' as string,
-  body: '' as string
+const carSort = ref<CarSort>({
+  brand: '',
+  year: '',
+  body: ''
 })
 
 function createFilters(arg: 'new_cars' | 'used_cars') {
@@ -273,24 +316,6 @@ const getData = async (arg: 'new_cars' | 'used_cars') => {
   loadedCarList.value = newCars?.map((x) => x)
   if (loadedCarList.value) {
     createFilters(arg)
-  }
-}
-
-const setSelector = async (index: number) => {
-  activeSelector.value = index
-  actualCarList.value = []
-  if (index === 0) {
-    await getData('new_cars')
-  }
-
-  if (index === 1) {
-    await getData('used_cars')
-  }
-
-  if (index === 2) {
-    fakeConfigCarsDB.forEach((item) => {
-      actualCarList.value?.push(item)
-    })
   }
 }
 
@@ -332,7 +357,52 @@ const acceptFilters = () => {
       }
     }
   })
+
   sortByPrice()
+}
+
+const clearFilters = () => {
+  sectionInfo.value.forEach((section) => {
+    section.filters.forEach((filter) => {
+      filter.input = ''
+    })
+  })
+
+  acceptFilters()
+
+  return sectionInfo.value
+}
+
+const setSelector = (index: number) => {
+  if (index !== activeSelector.value) {
+    setTimeout(
+      () => {
+        document.getElementsByClassName('catalog-window')[0].scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+          inline: 'nearest'
+        })
+      },
+      mobileMediaSize.value ? 300 : 100
+    )
+    clearFilters()
+    loadedCarList.value = []
+    activeSelector.value = index
+    actualCarList.value = []
+    if (index === 0) {
+      getData('new_cars')
+    }
+
+    if (index === 1) {
+      getData('used_cars')
+    }
+
+    if (index === 2) {
+      fakeConfigCarsDB.forEach((item) => {
+        actualCarList.value?.push(item)
+      })
+    }
+  }
 }
 
 const openCloseFilters = (arg: boolean) => {
@@ -345,11 +415,11 @@ const openCloseFilters = (arg: boolean) => {
   document.body.style.overflowY = 'visible'
 }
 
-const openCarModal = async (float: boolean, index?: number) => {
-  if (float && index !== undefined) {
+const openCarModal = async (float: boolean, object?: CarInfo) => {
+  if (float && object?.id !== undefined) {
     isModalOpened.value = true
     document.body.style.overflowY = 'hidden'
-    pickedCar.value = index
+    pickedNewCar.value = object
     return isModalOpened
   }
   isModalOpened.value = false
@@ -362,7 +432,7 @@ const changePrice = (arg: number) => {
   let priceLength = strigifiedPrice.length
   while (priceLength >= 3) {
     priceLength -= 3
-    strigifiedPrice.splice(priceLength, 0, '.')
+    strigifiedPrice.splice(priceLength, 0, ' ')
   }
   return strigifiedPrice.join('')
 }

@@ -30,6 +30,23 @@
   align-items: center;
 }
 
+.loading-icon {
+  position: absolute;
+  bottom: 40px;
+  right: 50px;
+  height: 40px;
+  width: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-icon img {
+  width: 100%;
+}
+
 .auth-warning {
   position: absolute;
   bottom: 95px;
@@ -37,6 +54,20 @@
   font-size: 14px;
   font-weight: 500;
   color: red;
+  animation: error 0.4s ease-in-out;
+}
+
+@keyframes error {
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+  20% {
+    transform: translateX(20px);
+  }
+  40% {
+    transform: translateX(-20px);
+  }
 }
 
 .action {
@@ -77,6 +108,13 @@
   gap: 15px;
 }
 
+.registation-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .registration__input,
 .authorisation__input {
   border: none;
@@ -87,6 +125,13 @@
   background-color: rgb(196, 196, 196);
   border-radius: 30px;
   font-size: 15px;
+  box-sizing: border-box;
+}
+
+.registration__input_denied,
+.authorisation__input_denied {
+  border: rgb(252, 4, 4) solid 1px;
+  animation: error 0.5s;
 }
 
 @media (max-width: 800px) {

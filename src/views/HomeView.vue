@@ -53,15 +53,19 @@
         </router-link>
       </nav>
       <a href="tel:+79260003939" class="phone-link">+7 (926) 000-39-39</a>
-      <router-link class="cabinet-button" :to="isLoggedIn ? '/cabinet' : ''">
+      <router-link class="cabinet-button" :to="sessionInfo ? '/cabinet' : ''">
         <project-button
-          :text="isLoggedIn ? loggedUser.name : 'Личный кабинет'"
+          :text="
+            sessionInfo
+              ? `${sessionInfo.user.user_metadata.first_name} ${sessionInfo.user.user_metadata.secnd_name}`
+              : 'Личный кабинет'
+          "
           :size="mobileMediaRequests.isActive ? 'big' : 'small'"
           :color="'gray'"
           :icon="'user'"
           @click="
             mobileMediaRequests.isActive ? openBurgerMenu(false, 'header') : '',
-              isLoggedIn ? '' : modalWindow(true)
+              sessionInfo ? '' : modalWindow(true)
           "
       /></router-link>
     </div>
@@ -69,34 +73,11 @@
   <modal-auth
     :is-opened="isAuthModalOpened"
     :is-logged-in="isLoggedIn"
-    :user-info="loggedUser.name"
-    @updated-name="
-      (arg) => {
-        loggedUser.name = arg
-      }
-    "
-    @is-logged-in="
-      (arg) => {
-        isLoggedIn = arg
-      }
-    "
     @close-auth-modal="modalWindow(false)"
   />
   <router-view
     :mobile-media-size="mobileMediaRequests.isActive"
     :tablet-media-size="tabletMediaRequests.isActive"
-    :logged-user="loggedUser.name"
-    :is-logged-in="isLoggedIn"
-    @is-logged-in="
-      (arg: boolean) => {
-        isLoggedIn = arg
-      }
-    "
-    @logged-user="
-      (arg: string) => {
-        loggedUser.name = ''
-      }
-    "
   />
   <footer class="footer">
     <div class="footer__body">
@@ -153,10 +134,35 @@ import { RouterLink, RouterView } from 'vue-router'
 import exitButton from '@/components/exit-button/exit-button.vue'
 import modalAuth from '@/components/modal-auth/modal-auth.vue'
 import projectButton from '@/components/project-button/project-button.vue'
+import { supabase } from '@/lib/supabaseClient'
+import { AuthChangeEvent, AuthError, Session } from '@supabase/supabase-js'
+
+type SuccessData = {
+  session: Session
+}
+
+type DeniedData = {
+  session: null
+}
+
+type Object =
+  | {
+      data: SuccessData
+      error: null
+    }
+  | {
+      data: DeniedData
+      error: AuthError
+    }
+  | {
+      data: DeniedData
+      error: null
+    }
 
 const isAuthModalOpened = ref(false as boolean)
 const isLoggedIn = ref<boolean>(false)
-const loggedUser = ref({ name: '' as string })
+const loadedInfo = ref<Object>()
+const sessionInfo = ref<Session | null>()
 const isHeaderBurgerOpened = ref(false)
 const isFooterBurgerOpened = ref(false)
 const mobileMediaRequests = ref({
@@ -168,9 +174,24 @@ const tabletMediaRequests = ref({
   isActive: false
 })
 
+const actualSessionEvent = ref<AuthChangeEvent>()
+
 const actualWindowSize = ref<number>(window.innerWidth)
 
+// const sessionInfo = ref<Object>()
+
+supabase.auth.onAuthStateChange((action, session) => {
+  actualSessionEvent.value = action
+  sessionInfo.value = session
+})
+
+async function getSession() {
+  loadedInfo.value = await supabase.auth.getSession()
+}
+
 onMounted(() => {
+  getSession()
+
   if (
     actualWindowSize.value <= tabletMediaRequests.value.width &&
     actualWindowSize.value > mobileMediaRequests.value.width
@@ -297,6 +318,18 @@ const rollTo = (arg: string) => {
     })
   }, 100)
 }
+
+// watch(
+//   () => sessionInfo.value?.data.session,
+//   (newValue) => {
+//     console.log(newValue)
+//     userName.value = ''
+//     if (newValue) {
+//       userName.value = `${newValue.user.user_metadata.first_name} ${newValue.user.user_metadata.secnd_name}`
+//     }
+//     return userName.value
+//   }
+// )
 </script>
 
 <style src="./HomeView.css" scoped />

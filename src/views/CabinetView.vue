@@ -1,15 +1,16 @@
 <template>
-  <div v-if="!isLoggedIn" class="cabinet-warning">
+  <div v-if="!userSession?.data.session" class="cabinet-warning">
     <p class="cabinet-warning__icon">{{ `:(` }}</p>
-    <p class="cabinet-warning__text">
-      Для доступа в кабинет нужна авторизация <br />
-      (логин: admin, пароль: admin)
-    </p>
+    <p class="cabinet-warning__text">Для доступа в кабинет нужна авторизация</p>
   </div>
-  <section v-if="isLoggedIn" class="cabinet">
+  <section v-if="userSession?.data.session" class="cabinet">
     <h1 class="cabinet__title">Личный кабинет</h1>
     <div class="cabinet__info">
-      <h2 class="cabinet__greeting">{{ `Добро пожаловать, ${loggedUser}` }}</h2>
+      <h2 class="cabinet__greeting">
+        {{
+          `Добро пожаловать, ${userSession.data.session.user.user_metadata.first_name} ${userSession.data.session.user.user_metadata.secnd_name}`
+        }}
+      </h2>
       <div class="cabinet__flow">
         <div class="cabinet__menu" :class="{ cabinet__menu_disabled: !activeMenu }">
           <router-link
@@ -45,8 +46,32 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, watch } from 'vue'
+import { supabase } from '@/lib/supabaseClient'
+import { AuthError, Session } from '@supabase/supabase-js'
+import { onMounted, ref, toRefs, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+type SuccessData = {
+  session: Session
+}
+
+type DeniedData = {
+  session: null
+}
+
+type Object =
+  | {
+      data: SuccessData
+      error: null
+    }
+  | {
+      data: DeniedData
+      error: AuthError
+    }
+  | {
+      data: DeniedData
+      error: null
+    }
 
 type CabMenu = {
   title: String
@@ -56,20 +81,14 @@ type CabMenu = {
 
 const cabinetProps = defineProps({
   mobileMediaSize: Boolean,
-  tabletMediaSize: Boolean,
-  isLoggedIn: Boolean,
-  loggedUser: {
-    type: String,
-    default: ''
-  }
+  tabletMediaSize: Boolean
 })
 
-const cabinetEmits = defineEmits(['loggedUser', 'isLoggedIn'])
-
-const { mobileMediaSize, tabletMediaSize, isLoggedIn, loggedUser } = toRefs(cabinetProps)
+const { mobileMediaSize, tabletMediaSize } = toRefs(cabinetProps)
 
 const router = useRouter()
 const route = useRoute()
+const userSession = ref<Object>()
 const activeMenu = ref('' as CabMenu['url'] | '')
 const menuItems: Array<CabMenu> = [
   { title: 'Заказы', url: 'orders', isActive: true },
@@ -83,6 +102,17 @@ menuItems.forEach((menuItem) => {
     activeMenu.value = menuItem.url
   }
 })
+
+async function getSession() {
+  userSession.value = await supabase.auth.getSession()
+}
+
+async function logOut() {
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.log(error)
+  }
+}
 
 const changeMenu = (arg: number) => {
   if (arg === 3) {
@@ -98,10 +128,13 @@ const changeMenu = (arg: number) => {
 
 const exit = (arg: number) => {
   if (arg === 3) {
-    cabinetEmits('loggedUser', '')
-    cabinetEmits('isLoggedIn', false)
+    logOut()
   }
 }
+
+onMounted(() => {
+  getSession()
+})
 
 watch(
   () => route.name,

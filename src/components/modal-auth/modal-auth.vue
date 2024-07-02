@@ -1,34 +1,39 @@
 <template>
   <div v-if="isOpened" class="modal-zone">
+    <!-- <div v-if="isOpened" class="modal-zone">
+      <div class="modal-window">
+        <exitButton @click="modalAuthEmits('closeAuthModal')" />
+      </div>
+    </div> -->
     <div class="modal-window">
       <exitButton @click="modalAuthEmits('closeAuthModal')" />
+      <div v-if="successSubmit" class="loading-icon"><loadingInfoIcon /></div>
       <div class="action">
         <p
           class="action__item"
-          :class="{ action__item_inactive: actualAction === 1 }"
-          @click="actualAction = 0"
+          :class="{ action__item_inactive: actualAction === 'register' }"
+          @click="actualAction = 'login'"
         >
           авторизация
         </p>
         <p class="action__item">|</p>
         <p
           class="action__item"
-          :class="{ action__item_inactive: actualAction === 0 }"
-          @click="actualAction = 1"
+          :class="{ action__item_inactive: actualAction === 'login' }"
+          @click="actualAction = 'register'"
         >
           регистрация
         </p>
       </div>
-      <div v-if="actualAction === 0" class="authorisation">
-        <div class="authorisation__inputs">
-          <label class="authorisation__label" for="auth-email">Логин</label>
+      <div v-if="actualAction === 'login'" class="authorisation">
+        <form id="authorisation" class="authorisation__inputs" @submit.prevent="authUser">
+          <label class="authorisation__label" for="auth-email">E-mail</label>
           <input
             id="auth-email"
             v-model="authorisationInfo.email"
             class="authorisation__input"
             type="text"
-            title="Login: admin"
-            placeholder="Введите ваш логин"
+            placeholder="Введите ваш e-mail"
           />
           <label class="authorisation__label" for="auth-pass">Пароль</label>
           <input
@@ -36,59 +41,45 @@
             v-model="authorisationInfo.password"
             class="authorisation__input"
             type="password"
-            title="Pass: admin"
             placeholder="Введите ваш пароль"
           />
-        </div>
+        </form>
         <span v-if="warningText" class="auth-warning">{{ warningText }}</span>
         <projectButton
+          :type="'submit'"
+          :form="'authorisation'"
           :size="'medium'"
           :text="'Вход'"
           :color="'gray'"
           :button-disabled="isInputsEmpty"
-          @click="auth"
         />
       </div>
-      <div v-if="actualAction === 1" class="registration">
-        <div class="registration__inputs">
-          <label class="registration__label" for="reg-email">Email</label>
-          <input
-            id="reg-email"
-            v-model="registrationInfo.email"
-            class="registration__input"
-            type="text"
-            disabled
-          />
-          <label class="registration__label" for="reg-name">Ваше имя</label>
-          <input
-            id="reg-name"
-            v-model="registrationInfo.name"
-            class="registration__input"
-            type="text"
-            disabled
-          />
-          <label class="registration__label" for="reg-surname">Ваша фамилия</label>
-          <input
-            id="reg-surname"
-            v-model="registrationInfo.surname"
-            class="registration__input"
-            type="text"
-            disabled
-          />
-          <label class="registration__label" for="reg-pass">Пароль</label>
-          <input
-            id="reg-pass"
-            v-model="registrationInfo.password"
-            class="registration__input"
-            type="password"
-            disabled
-          />
-        </div>
+      <div v-if="actualAction === 'register'" class="registration">
+        <form id="registration" class="registration__inputs" @submit.prevent="register">
+          <div
+            v-for="(registrationItem, index) in registrationItems"
+            :key="index"
+            class="registation-item"
+          >
+            <label class="registration__label" :for="registrationItem.id">{{
+              registrationItem.label
+            }}</label>
+            <input
+              :id="registrationItem.id"
+              v-model="registrationInfo[registrationItem.input as RegisterKeys]"
+              class="registration__input"
+              :type="registrationItem.type"
+              :placeholder="registrationItem.placeholder"
+            />
+          </div>
+        </form>
         <projectButton
+          :type="'submit'"
+          :form="'registration'"
           :size="'medium'"
           :text="'Регистрация'"
           :color="'gray'"
-          :button-disabled="true"
+          :button-disabled="isInputsEmpty"
         />
       </div>
     </div>
@@ -98,72 +89,200 @@
 <script setup lang="ts">
 import projectButton from '@/components/project-button/project-button.vue'
 import exitButton from '@/components/exit-button/exit-button.vue'
-import { ref, toRefs, computed } from 'vue'
+import { ref, toRefs, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/lib/supabaseClient'
+import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
+import { Session } from '@supabase/supabase-js'
+
+type RegisterInfo = {
+  name: string
+  surname: string
+  email: string
+  password: string
+}
+
+type RegisterKeys = keyof RegisterInfo
 
 const router = useRouter()
+
 const modalAuthProps = defineProps({
   isLoggedIn: Boolean,
   isOpened: Boolean
 })
-const modalAuthEmits = defineEmits(['closeAuthModal', 'updatedName', 'isLoggedIn'])
+
+const modalAuthEmits = defineEmits(['closeAuthModal'])
+
 const { isOpened } = toRefs(modalAuthProps)
-const actualAction = ref(0 as number)
+const actualAction = ref<'login' | 'register'>('login')
+const successSubmit = ref<boolean>(false)
 const authorisationInfo = ref({
-  email: '' as String,
-  password: '' as String
+  email: '' as string,
+  password: '' as string
 })
+
+const sessionInfo = ref<Session | null>()
+
+// async function getSession() {
+//   sessionInfo.value = (await supabase.auth.getSession()).data.session
+//   return sessionInfo.value
+// }
+
+// getSession()
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (!session) {
+    successSubmit.value = true
+  }
+  successSubmit.value = false
+})
+
+// const sessionInfo = computed(() => {
+//   const info = await getSession()
+
+//   if (info) {
+//     return true
+//   }
+//   return false
+// })
+
+const authorisationError = ref<Boolean>(false)
+
 const registrationInfo = ref({
   name: '' as String,
   surname: '' as String,
   email: '' as String,
   password: '' as String
 })
-const authInfo = {
-  name: 'Emil Valiev' as string,
-  email: 'ADMIN' as string,
-  password: 'admin' as string
+
+const warningText = ref<string>('')
+
+const registrationItems = [
+  {
+    id: 'reg-email',
+    label: 'Email',
+    placeholder: 'Введите Email',
+    input: 'email',
+    type: 'text'
+  },
+  {
+    id: 'reg-name',
+    label: 'Ваше Имя',
+    placeholder: 'Введите Имя',
+    input: 'name',
+    type: 'text'
+  },
+  {
+    id: 'reg-surname',
+    label: 'Ваша Фамилия',
+    placeholder: 'Введите Фамилию',
+    input: 'surname',
+    type: 'text'
+  },
+  {
+    id: 'reg-pass',
+    label: 'Пароль',
+    placeholder: 'Введите пароль',
+    input: 'password',
+    type: 'password'
+  }
+]
+
+const auth = async () => {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: authorisationInfo.value.email as string,
+      password: authorisationInfo.value.password as string
+    })
+
+    if (!error) {
+      modalAuthEmits('closeAuthModal')
+      router.push({ name: 'cabinet' })
+      authorisationInfo.value = {
+        email: '',
+        password: ''
+      }
+    }
+
+    if (error?.message === 'Invalid login credentials') {
+      successSubmit.value = false
+      authorisationError.value = true
+      warningText.value = 'Неправильный логин или пароль'
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
-const currentUser = ref({
-  email: '' as String,
-  password: '' as String
-})
-const warningText = ref('' as string)
-const auth = () => {
-  if (!authorisationInfo.value.email) {
-    warningText.value = 'Введите email'
-  }
 
-  if (!authorisationInfo.value.password) {
-    warningText.value = 'Введите пароль'
-  }
+const authUser = () => {
+  successSubmit.value = true
+  auth()
+}
 
-  if (
-    !currentUser.value.email &&
-    !currentUser.value.password &&
-    authorisationInfo.value.email.toUpperCase() === authInfo.email &&
-    authorisationInfo.value.password === authInfo.password
-  ) {
-    modalAuthEmits('closeAuthModal')
-    modalAuthEmits('isLoggedIn', true)
-    modalAuthEmits('updatedName', authInfo.name)
-    currentUser.value.email = authorisationInfo.value.email
-    currentUser.value.password = authorisationInfo.value.password
-    router.push({ name: 'cabinet' })
-    return currentUser
+const register = async () => {
+  try {
+    const { error } = await supabase.auth.signUp({
+      email: registrationInfo.value.email as string,
+      password: registrationInfo.value.password as string,
+      options: {
+        data: {
+          first_name: registrationInfo.value.name,
+          secnd_name: registrationInfo.value.surname
+        }
+      }
+    })
+    console.error(error)
+    if (!error) {
+      alert('Успешно')
+      registrationInfo.value = {
+        name: '',
+        surname: '',
+        email: '',
+        password: ''
+      }
+    }
+  } catch (error) {
+    console.error(error)
   }
-  warningText.value = 'Такого пользователя нет'
-  setTimeout(() => {
+}
+
+watch(
+  () => Object.values(authorisationInfo.value),
+  () => {
     warningText.value = ''
-  }, 4000)
-  return currentUser
-}
+    authorisationError.value = false
+  }
+)
+
+watch(
+  () => actualAction.value,
+  () => {
+    authorisationInfo.value = {
+      email: '',
+      password: ''
+    }
+  }
+)
 
 const isInputsEmpty = computed(() => {
-  if (
-    !actualAction.value &&
-    (!authorisationInfo.value.email || !authorisationInfo.value.password)
-  ) {
+  let inputs
+  if (actualAction.value === 'login') {
+    inputs = authorisationInfo.value
+  }
+
+  if (actualAction.value === 'register') {
+    inputs = registrationInfo.value
+  }
+
+  let emptyInputs = 0
+
+  Object.values(inputs as object).forEach((item) => {
+    if (!item) {
+      emptyInputs += 1
+    }
+  })
+
+  if (emptyInputs > 0) {
     return true
   }
   return false

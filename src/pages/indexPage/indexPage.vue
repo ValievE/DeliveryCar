@@ -15,14 +15,18 @@
         Покупка нового автомобиля это всегда приятно, а если убрать долгое оформление в автосалоне,
         бумажную волокиту, то еще лучше!
       </p>
-      <router-link class="info-block__button" :to="'/'">
+      <router-link class="info-block__button" :to="{ name: 'delivery' }">
         <project-button :size="'big'" :text="'Подробнее'" :color="'orange'" :icon="'arrow'" />
       </router-link>
     </div>
   </section>
   <section class="section-two">
-    <button class="carousel__button carousel_style" @click="changeCarouselPos('left')">
-      <img class="carousel__button__img" src="/img/icons/icon_carousel_left.svg" alt="left" />
+    <button
+      v-if="!mobileMediaSize"
+      class="carousel__button carousel_style"
+      @click="changeCarouselPos('left')"
+    >
+      <img class="carousel__button__img" src="/img/icons/icon_carousel.svg" alt="left" />
     </button>
     <div class="carousel__body">
       <div class="carousel__items" :style="{ left: carouselSwap }">
@@ -31,8 +35,12 @@
         </div>
       </div>
     </div>
-    <button class="carousel__button carousel_style" @click="changeCarouselPos('right')">
-      <img class="carousel__button__img" src="/img/icons/icon_carousel_right.svg" alt="right" />
+    <button
+      v-if="!mobileMediaSize"
+      class="carousel__button carousel__button_mirrored carousel_style"
+      @click="changeCarouselPos('right')"
+    >
+      <img class="carousel__button__img" src="/img/icons/icon_carousel.svg" alt="left" />
     </button>
   </section>
   <section class="section-three">
@@ -79,15 +87,16 @@
   <section class="section-five">
     <h4 class="section-five__title">Новости</h4>
     <div class="news-block">
-      <div v-for="(news, index) in allNews" :key="index" class="news-card">
-        <p class="news-card__title">{{ news.title }}</p>
-        <p class="news-card__text">{{ news.text }}</p>
+      <div v-if="!loadedNews.length" class="news-card_loading loader"></div>
+      <div v-for="(news, index) in loadedNews" :key="index" class="news-card">
+        <p class="news-card__title">{{ news.news_title }}</p>
+        <p class="news-card__text">{{ news.news_text }}</p>
         <project-button
           :text="'Читать далее'"
           :color="'gray'"
           :size="'small'"
           class="news-card__button"
-          @click="modalWindow(true, index)"
+          @click="modalWindow(true, news)"
         />
       </div>
     </div>
@@ -98,12 +107,15 @@
 import modalNews from '@/components/modal-news/modal-news.vue'
 import projectButton from '@/components/project-button/project-button.vue'
 import { ref, toRefs } from 'vue'
+import { supabase } from '@/lib/supabaseClient'
 
 type News = {
-  title: String
-  text: String
-  date: String
-  img: String
+  id?: string
+  created_at?: string
+  news_title?: string
+  news_text?: string
+  image?: boolean
+  url?: string
 }
 
 const indexPageProps = defineProps({
@@ -111,6 +123,16 @@ const indexPageProps = defineProps({
 })
 
 const { mobileMediaSize } = toRefs(indexPageProps)
+const loadedNews = ref<Array<News>>([])
+
+const getData = async () => {
+  const { data: allNews, error } = await supabase.from('news').select('*')
+  console.error(error)
+  loadedNews.value = allNews?.map((item) => item) as Array<News>
+  return loadedNews.value
+}
+
+getData()
 
 const brands = [
   {
@@ -186,38 +208,17 @@ const specialOffers = [
   }
 ]
 
-const allNews: Array<News> = [
-  {
-    title: 'Новое поступление',
-    text: 'С большой радостью сообщаем, что в наш онлайн-автосалон поступил ряд новых автомобилей, 2023 года выпуска, среди которых имеются марки BMW, Volkswagen, Mercedes-Benz, Honda, Nissan, Toyota. Новые модели вы уже можете увидеть в разделе "Каталог"',
-    date: '21.05.2024',
-    img: 'https://garanttransauto.ru/media/MCQrqw3WJYKcsedZVWW2kFvUhDuQkFgC-1280x800.jpg'
-  },
-  {
-    title: 'Тест-драйв',
-    text: 'Пройдите бесплатный тест-драйв новинок Haval.',
-    date: '01.05.24',
-    img: 'https://www.ixbt.com/img/n1/news/2023/6/4/1488x0_1_autohomecar__CjIFVmSv18SAQD6lACJARBf1ujw977_large.jpg'
-  },
-  {
-    title: 'Обновление сервиса',
-    text: 'Наш сервис быстро развивается и спешим выпустить обновление с изменением и улучшением конфигуратора, работой сайта и отдельных его частей. Мы надеемся, что улучшения будут вам по вкусу!',
-    date: '09.04.24',
-    img: ''
-  }
-]
-
 const isNewsModalOpened = ref(false)
-const openedNews = ref({} as Object)
+const openedNews = ref({} as News)
 
 const carouselSwap = ref('0px')
 const carouselActualPos = ref(0)
 
-const modalWindow = (arg: boolean, index?: number) => {
-  if (arg && index !== undefined) {
+const modalWindow = (arg: boolean, news?: News) => {
+  if (arg && news !== undefined) {
     isNewsModalOpened.value = true
     document.body.style.overflowY = 'hidden'
-    openedNews.value = allNews[index]
+    openedNews.value = news
     return isNewsModalOpened
   }
   isNewsModalOpened.value = false
@@ -257,10 +258,10 @@ const changeCarouselPos = (arg: string) => {
     ) {
       carouselActualPos.value = carouselMinWidth
     }
-
-    carouselSwap.value = `${carouselActualPos.value}px`
-    return carouselSwap.value
   }
+
+  carouselSwap.value = `${carouselActualPos.value}px`
+  return carouselSwap.value
 }
 </script>
 
