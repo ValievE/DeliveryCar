@@ -20,19 +20,20 @@
           ></textarea>
         </div>
       </form>
+      <div v-if="ticketLoading" class="ticket-loading"><loadingInfoIcon /></div>
       <projectButton
         :text="'Создать обращение'"
         :color="'orange'"
         :size="'medium'"
         :button-disabled="isTextAreaEmpty"
-        @click="createTicket"
+        @click="tryCreate"
       />
     </div>
   </div>
   <h3 class="section__title">Техническая поддержка</h3>
   <div class="tickets">
     <div class="tickets-header">
-      <h6>Ваши обращения</h6>
+      <h6 class="tickets-header-title">Ваши обращения</h6>
       <projectButton
         :text="'Создать обращение'"
         :color="'orange'"
@@ -40,28 +41,30 @@
         @click="openTicketModal(true)"
       />
     </div>
-    <div v-for="(ticket, index) in tickets" :key="index" class="ticket">
+    <div v-if="!session?.data.session?.user.user_metadata" class="ticket loader"></div>
+
+    <div v-for="(ticket, index) in userTickets" :key="index" class="ticket">
       <div class="ticket-info">
-        <p class="ticket-date">{{ `Дата обращения: ${ticket.create_data}` }}</p>
+        <p class="ticket-date">{{ `Дата обращения: ${parseTime(ticket.create_date)}` }}</p>
         <p class="ticket-type">{{ `Тип обращения: ${ticket.type}` }}</p>
         <P
           class="ticket-status"
           :style="{
-            backgroundColor: setColor(ticket.status)
+            backgroundColor: setColor(ticket.answer)
           }"
-          >{{ ticket.status }}</P
+          >{{ ticket.answer ? 'Получен ответ' : 'Рассмотрение' }}</P
         >
-        <p v-if="ticket.answer_data" class="ticket-date">
-          {{ `Дата ответа: ${ticket.answer_data}` }}
+        <p v-if="ticket.answer_data" class="ticket-answer-date">
+          {{ `Дата ответа: ${parseTime(ticket.answer_data)}` }}
         </p>
       </div>
       <div class="ticket-separator"></div>
       <div class="ticket-texts">
-        <p class="ticket-text">{{ ticket.question_text }}</p>
-        <div v-if="ticket.answer_text" class="ticket-text-separator"></div>
-        <p v-if="ticket.answer_text" class="ticket-answer">Ответ тех. поддержки</p>
-        <p v-if="ticket.answer_text" class="ticket-text">
-          {{ ticket.answer_text }}
+        <p class="ticket-text">{{ ticket.question }}</p>
+        <div v-if="ticket.answer" class="ticket-text-separator"></div>
+        <p v-if="ticket.answer" class="ticket-answer">Ответ тех. поддержки</p>
+        <p v-if="ticket.answer" class="ticket-text">
+          {{ ticket.answer }}
         </p>
       </div>
     </div>
@@ -71,16 +74,40 @@
 <script setup lang="ts">
 import exitButton from '@/components/exit-button/exit-button.vue'
 import projectButton from '@/components/project-button/project-button.vue'
-import { computed, ref } from 'vue'
+import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
+import { AuthError, Session } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabaseClient'
+import { computed, onMounted, ref, watch } from 'vue'
+
+type SuccessData = {
+  session: Session
+}
+
+type DeniedData = {
+  session: null
+}
+
+type SObject =
+  | {
+      data: SuccessData
+      error: null
+    }
+  | {
+      data: DeniedData
+      error: AuthError
+    }
+  | {
+      data: DeniedData
+      error: null
+    }
 
 type Ticket = {
-  type: 'Жалоба' | 'Вопрос'
-  ticket_id: number
-  create_data: number
-  answer_data?: number
-  question_text: string
-  answer_text?: string
-  status: 'Рассмотрение' | 'Получен ответ'
+  id?: number
+  create_date: number
+  type: 'Вопрос' | 'Жалоба'
+  question: string
+  answer_data: number | null
+  answer: string | null
 }
 
 type NewTicket = {
@@ -88,6 +115,12 @@ type NewTicket = {
   text: string
   date: number
 }
+
+const session = ref<SObject>()
+
+const ticketIDs = ref<number[]>()
+const userTickets = ref<Ticket[]>([])
+const ticketLoading = ref<boolean>(false)
 
 const createTicketModalOpened = ref<boolean>(false)
 
@@ -97,6 +130,22 @@ const newTicketInfo = ref<NewTicket>({
   date: 0
 })
 
+async function getTickets() {
+  userTickets.value = []
+  ticketIDs.value?.forEach(async (ticketID) => {
+    const ticket = await supabase.from('tickets').select().eq('id', ticketID)
+    userTickets.value?.push(ticket.data?.[0] as Ticket)
+  })
+}
+
+async function getSession() {
+  session.value = await supabase.auth.getSession()
+  ticketIDs.value = session.value?.data.session?.user.user_metadata.tickets
+  getTickets()
+}
+
+getSession()
+
 const isTextAreaEmpty = computed(() => {
   if (!newTicketInfo.value.text) {
     return true
@@ -104,33 +153,11 @@ const isTextAreaEmpty = computed(() => {
   return false
 })
 
-const tickets = ref<Ticket[]>([
-  {
-    ticket_id: 1,
-    create_data: 3141412,
-    question_text:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dolor diam, iaculis sit amet mauris eu, feugiat dictum turpis. Etiam risus sapien, venenatis in lobortis commodo, elementum ac eros. Ut in ornare nunc, vel mattis erat. Nunc sit amet luctus elit. Vivamus a sagittis neque, quis tristique metus. Nullam at ullamcorper eros. Nulla est ipsum, viverra in erat vel, pharetra pretium tortor. Cras placerat dictum tincidunt. Sed feugiat pulvinar nulla, a rhoncus mi dictum ut. Aenean iaculis tempus sagittis. Integer gravida ex magna, ac egestas sapien ultricies interdum. Aliquam suscipit tortor lectus. Donec a lacus non dui placerat finibus.',
-    status: 'Рассмотрение',
-    type: 'Вопрос'
-  },
-  {
-    ticket_id: 2,
-    create_data: 3141412,
-    question_text:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dolor diam, iaculis sit amet mauris eu, feugiat dictum turpis. Etiam risus sapien, venenatis in lobortis commodo, elementum ac eros. Ut in ornare nunc, vel mattis erat. Nunc sit amet luctus elit. Vivamus a sagittis neque, quis tristique metus. Nullam at ullamcorper eros. Nulla est ipsum, viverra in erat vel, pharetra pretium tortor. Cras placerat dictum tincidunt. Sed feugiat pulvinar nulla, a rhoncus mi dictum ut. Aenean iaculis tempus sagittis. Integer gravida ex magna, ac egestas sapien ultricies interdum. Aliquam suscipit tortor lectus. Donec a lacus non dui placerat finibus.',
-    status: 'Получен ответ',
-    answer_data: 41242141,
-    answer_text:
-      'Vestibulum lacinia faucibus ex, sed dictum nisi lacinia nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut pulvinar vehicula ex eu rutrum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla scelerisque varius felis, sed elementum est ultrices vel. Praesent pellentesque dui eget urna blandit, eu tristique urna hendrerit. Curabitur sit amet odio efficitur, blandit massa id, vulputate lorem.',
-    type: 'Жалоба'
-  }
-])
-
-const setColor = (arg: 'Рассмотрение' | 'Получен ответ') => {
-  if (arg === 'Получен ответ') {
+const setColor = (arg?: string | null) => {
+  if (arg) {
     return 'rgb(139, 231, 53)'
   }
-  if (arg === 'Рассмотрение') {
+  if (!arg) {
     return '#ff9900'
   }
   return 'gray'
@@ -147,20 +174,47 @@ const openTicketModal = (arg: boolean) => {
   return createTicketModalOpened.value
 }
 
-const createTicket = () => {
-  newTicketInfo.value.date = Date.now()
+const parseTime = (arg: number) => {
+  const newDate = new Date(arg)
+  const options = {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  } as const
+  return newDate.toLocaleString('ru', options)
+}
+
+const createTicket = async () => {
   const newTicket: Ticket = {
-    ticket_id: tickets.value[tickets.value.length - 1].ticket_id + 1,
-    create_data: newTicketInfo.value.date,
-    question_text: newTicketInfo.value.text,
-    status: 'Рассмотрение',
-    answer_data: 0,
-    answer_text: '',
-    type: newTicketInfo.value.type
+    answer: null,
+    create_date: Date.now(),
+    question: newTicketInfo.value.text,
+    type: newTicketInfo.value.type,
+    answer_data: null
   }
 
-  tickets.value.push(newTicket)
-  console.log(newTicketInfo.value)
+  const { data } = await supabase.from('tickets').insert([newTicket]).select()
+  const newTicketIDs = ref<number[]>([])
+
+  if (ticketIDs.value) {
+    newTicketIDs.value = ticketIDs.value.map((x) => x)
+  }
+  newTicketIDs.value.push(data?.[0].id)
+  ticketIDs.value = newTicketIDs.value
+  await supabase.auth.updateUser({
+    data: {
+      tickets: newTicketIDs.value
+    }
+  })
+  ticketLoading.value = false
+  openTicketModal(false)
+}
+
+const tryCreate = () => {
+  ticketLoading.value = true
+  createTicket()
 }
 </script>
 

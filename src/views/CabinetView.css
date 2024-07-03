@@ -230,6 +230,7 @@
   .cabinet__active-info {
     overflow-y: scroll;
     max-width: 100%;
+    width: 100%;
     padding: 20px;
     gap: 20px;
   }

@@ -267,7 +267,8 @@ const register = async () => {
       options: {
         data: {
           first_name: upperCase(registrationInfo.value.name as string),
-          secnd_name: upperCase(registrationInfo.value.surname as string)
+          secnd_name: upperCase(registrationInfo.value.surname as string),
+          tickets: []
         }
       }
     })
