@@ -138,7 +138,6 @@ import { ref, toRefs, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabaseClient'
 import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
-import { Session } from '@supabase/supabase-js'
 
 type RegisterInfo = {
   name: string
@@ -174,30 +173,12 @@ const regErrors = ref({
   email: false
 })
 
-const sessionInfo = ref<Session | null>()
-
-// async function getSession() {
-//   sessionInfo.value = (await supabase.auth.getSession()).data.session
-//   return sessionInfo.value
-// }
-
-// getSession()
-
 supabase.auth.onAuthStateChange((event, session) => {
   if (!session) {
     successSubmit.value = true
   }
   successSubmit.value = false
 })
-
-// const sessionInfo = computed(() => {
-//   const info = await getSession()
-
-//   if (info) {
-//     return true
-//   }
-//   return false
-// })
 
 const authorisationError = ref<Boolean>(false)
 

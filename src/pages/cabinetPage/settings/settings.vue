@@ -109,7 +109,8 @@
         :size="'medium'"
         :button-disabled="
           (isModalOpened === 'email' && isEmailCooldown) ||
-          (isModalOpened === 'password' && isPasswordCooldown)
+          (isModalOpened === 'password' && isPasswordCooldown) ||
+          !!errorText
         "
         @click="save"
       />
@@ -157,7 +158,7 @@ import modalUniversal from '@/components/modal-universal/modal-universal.vue'
 import projectButton from '@/components/project-button/project-button.vue'
 import exitButton from '@/components/exit-button/exit-button.vue'
 import loadingInfoIcon from '@/components/loading-info-icon/loading-info-icon.vue'
-import { onMounted, ref, toRefs } from 'vue'
+import { onMounted, ref, toRefs, watch } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { UserMetadata } from '@supabase/supabase-js'
 
@@ -320,6 +321,39 @@ const save = () => {
   isLoading.value = true
   return isLoading.value
 }
+
+watch(
+  () => Object.values(modalInputs.value),
+  () => {
+    if (
+      (modalInputs.value.addit.length || modalInputs.value.main.length) < 6 &&
+      (modalInputs.value.addit.length || modalInputs.value.main.length) !== 0
+    ) {
+      errorText.value = 'Длина пароля должна быть больше 6 символов'
+      return errorText.value
+    }
+    errorText.value = ''
+    return errorText.value
+  }
+)
+
+watch(
+  () => settingsItems.value[0].input,
+  () => {
+    const reg = /[^a-zA-Zа-яА-ЯёЁ]/
+    settingsItems.value[0].input = settingsItems.value[0].input.replace(reg, '')
+    return settingsItems.value
+  }
+)
+
+watch(
+  () => settingsItems.value[1].input,
+  () => {
+    const reg = /[^a-zA-Zа-яА-ЯёЁ]/
+    settingsItems.value[1].input = settingsItems.value[1].input.replace(reg, '')
+    return settingsItems.value
+  }
+)
 </script>
 
 <style scoped src="./settings.css" />
