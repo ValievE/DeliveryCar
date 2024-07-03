@@ -73,6 +73,8 @@
   <modal-auth
     :is-opened="isAuthModalOpened"
     :is-logged-in="isLoggedIn"
+    :mobile-media-size="mobileMediaRequests.isActive"
+    :tablet-media-size="tabletMediaRequests.isActive"
     @close-auth-modal="modalWindow(false)"
   />
   <router-view

@@ -13,14 +13,6 @@
         :key="index"
         class="selector"
         :class="{ selector_active: activeSelector === index }"
-        :style="{
-          height:
-            activeSelector === index
-              ? (mobileMediaSize ? '300px' : '280px') || (tabletMediaSize ? '200px' : '280px')
-              : mobileMediaSize || tabletMediaSize
-                ? '100px'
-                : '280px'
-        }"
         @click="setSelector(index)"
       >
         <h3 class="selector__name">
@@ -29,7 +21,7 @@
         <div class="selector__img" :style="{ backgroundImage: `url('${selection.img}')` }"></div>
       </div>
       <img
-        v-if="!isNaN(activeSelector)"
+        v-if="!isNaN(activeSelector) && !tabletMediaSize && !mobileMediaSize"
         class="selector__sign"
         src="/img/icons/icon_triangle.svg"
         alt="\/"
@@ -117,13 +109,13 @@
                 :size="'medium'"
                 :color="'orange'"
                 :text="'Применить'"
-                @click="acceptFilters, openCloseFilters(false)"
+                @click="acceptFilters(), openCloseFilters(false)"
               />
               <projectButton
                 :size="'small'"
                 :color="'gray'"
                 :text="'Сбросить фильтры'"
-                @click="clearFilters, openCloseFilters(false)"
+                @click="clearFilters(), openCloseFilters(false)"
               />
             </div>
           </div>

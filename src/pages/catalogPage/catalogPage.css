@@ -384,9 +384,27 @@
   .selectors {
     height: fit-content;
     display: flex;
-    flex-direction: column;
-    width: 70%;
+    width: 100%;
+    gap: 10px;
     margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .selectors::-webkit-scrollbar {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .selectors::-webkit-scrollbar-thumb {
+    background-color: #000518;
+    border-radius: 20px;
+  }
+
+  .selector {
+    min-width: 600px;
+    height: 140px;
+    border-radius: 0px;
   }
 
   .catalog-window__body {
@@ -416,6 +434,12 @@
 
   .selectors {
     width: 100%;
+  }
+
+  .selector {
+    min-width: 300px;
+    height: 140px;
+    border-radius: 0px;
   }
 
   .catalog-window__header {

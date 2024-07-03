@@ -1,7 +1,7 @@
 <template>
   <div class="modal-zone">
     <div class="modal-window">
-      <img class="universal-icon" :src="`public/img/icons/icon_${type}.svg`" alt="" />
+      <img class="universal-icon" :src="`/img/icons/icon_${type}.svg`" alt="" />
       <p class="universal-text">{{ text }}</p>
       <div
         v-if="timer"

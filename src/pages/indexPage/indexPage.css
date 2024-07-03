@@ -649,6 +649,7 @@
   }
 
   .news-block {
+    display: flex;
     flex-direction: column;
     height: fit-content;
   }

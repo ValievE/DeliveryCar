@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isOpened" class="modal-zone">
+  <div v-if="isOpened" class="modal-zone" @click.self="modalAuthEmits('closeAuthModal')">
     <div class="modal-window">
       <modalUniversal
         v-if="successRegistration"
@@ -45,8 +45,19 @@
               class="show-password-btn"
               src="/img/icons/icon_eye.svg"
               alt=""
-              @mouseup="authorisationInfo.type = 'password'"
-              @mousedown="authorisationInfo.type = 'text'"
+              @mouseup="
+                !tabletMediaSize && !mobileMediaSize ? (authorisationInfo.type = 'password') : ''
+              "
+              @mousedown="
+                !tabletMediaSize && !mobileMediaSize ? (authorisationInfo.type = 'text') : ''
+              "
+              @click="
+                tabletMediaSize || mobileMediaSize
+                  ? authorisationInfo.type !== 'password'
+                    ? (authorisationInfo.type = 'password')
+                    : (authorisationInfo.type = 'text')
+                  : ''
+              "
             />
             <input
               id="auth-pass"
@@ -141,20 +152,21 @@ type RegisterKeys = keyof RegisterInfo
 const router = useRouter()
 
 const modalAuthProps = defineProps({
-  isLoggedIn: Boolean,
-  isOpened: Boolean
+  isOpened: Boolean,
+  mobileMediaSize: Boolean,
+  tabletMediaSize: Boolean
 })
 
 const modalAuthEmits = defineEmits(['closeAuthModal'])
 
-const { isOpened } = toRefs(modalAuthProps)
+const { isOpened, mobileMediaSize, tabletMediaSize } = toRefs(modalAuthProps)
 const actualAction = ref<'login' | 'register'>('login')
 const successSubmit = ref<boolean>(false)
 const successRegistration = ref<boolean>(false)
 const authorisationInfo = ref({
   email: '' as string,
   password: '' as string,
-  type: 'password' as string
+  type: 'password' as 'password' | 'text'
 })
 
 const regErrors = ref({

@@ -92,8 +92,8 @@ const userSession = ref<Object>()
 const activeMenu = ref('' as CabMenu['url'] | '')
 const menuItems: Array<CabMenu> = [
   { title: 'Заказы', url: 'orders', isActive: true },
-  { title: 'Настройки', url: 'settings', isActive: false },
-  { title: 'Тех. поддержка', url: 'help', isActive: false },
+  { title: 'Настройки', url: 'settings', isActive: true },
+  { title: 'Тех. поддержка', url: 'help', isActive: true },
   { title: 'Выход', url: '/', isActive: true }
 ]
 

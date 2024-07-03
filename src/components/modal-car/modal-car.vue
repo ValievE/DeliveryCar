@@ -27,7 +27,12 @@
           </div>
           <div class="buy-menu">
             <p class="car-price">{{ `${changePrice(carItem.price)} ₽` }}</p>
-            <projectButton :text="'Оформить'" :icon="'cart'" :color="'orange'" :size="'medium'" />
+            <projectButton
+              :text="'Хочу эту машину'"
+              :icon="'cart'"
+              :color="'orange'"
+              :size="'medium'"
+            />
           </div>
         </div>
       </div>
